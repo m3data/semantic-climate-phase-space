@@ -1,10 +1,6 @@
 # Semantic Climate Phase Space
 
-**It matters less about where we are, and more about how we move together.**  
-This framework studies movement — relational, semantic, affective, embodied —  
-as a core substrate of meaning-making across human–human and human–AI dialogues.
-
-# Semantic Climate Phase Space
+**It matters less about where we are, and more about how we move together.**
 
 A dynamical-systems framework for studying how relational meaning unfolds in dialogue.  
 Rather than treating mind as an internal system or reducing cognition to measurable substrates, this project analyses *semantic movement* and other observable traces as partial expressions of a wider ecology of sense-making. It incorporates the core semantic complexity metrics of Morgoulis (2025) but extends them into a relational phase‑space architecture that supports trajectory analysis, attractor dynamics, and optional semantic–autonomic integration across human–human and human–AI interaction.
@@ -102,10 +98,25 @@ Researchers can now interrogate meaning-making, coherence formation, destabiliza
 ```bash
 git clone https://github.com/m3data/semantic-climate-phase-space.git
 cd semantic-climate-phase-space
-pip install -r requirements.txt
+pip install -r semantic_climate_app/requirements.txt
 ```
 
-**Dependencies:** numpy, scipy, scikit-learn, pandas, vaderSentiment (optional)
+### Computational Requirements
+
+This framework uses `sentence-transformers` with `all-mpnet-base-v2` for embedding generation. Be aware:
+
+- **PyTorch dependency** (~2GB download on first install)
+- **Model download** (~400MB on first run)
+- **GPU recommended** for reasonable embedding speed (CPU works but slower)
+- **Memory:** 4GB+ RAM recommended for embedding operations
+
+For local LLM inference via Ollama, additional resources required:
+- **7B models:** ~8GB RAM/VRAM
+- **70B models:** ~40GB+ RAM/VRAM (or quantized versions)
+
+**Core dependencies:** numpy, scipy, scikit-learn, pandas, sentence-transformers, torch, fastapi
+
+**Optional:** vaderSentiment (affective substrate), anthropic, openai (cloud providers)
 
 ## Quick Start
 
@@ -166,12 +177,24 @@ dh = entropy_shift(embeddings)
 
 ## Web Application
 
-Real-time semantic coupling analysis with Ollama-powered local LLMs.
+Real-time semantic coupling analysis with multi-provider LLM support.
+
+### Supported LLM Providers
+
+| Provider | Type | Latency | Setup |
+|----------|------|---------|-------|
+| **Together AI** | Cloud | 2-5s | Set `TOGETHER_API_KEY` env var |
+| **Ollama** | Local | 30-120s | `ollama serve` + pull model |
+| **Anthropic** | Cloud | 3-8s | Set `ANTHROPIC_API_KEY` env var |
+| **OpenAI** | Cloud | 3-8s | Set `OPENAI_API_KEY` env var |
+
+**Note:** Cloud providers (Together AI recommended) significantly reduce latency confounds in semantic coupling measurements. Local inference via Ollama provides privacy but introduces variable response times.
+
+### Running the Web App
 
 ```bash
-# Start Ollama
-ollama serve
-ollama pull llama3.2
+# Configure API keys (copy and edit)
+cp semantic_climate_app/.env.example semantic_climate_app/.env
 
 # Run web app
 cd semantic_climate_app
@@ -180,8 +203,15 @@ python backend/main.py
 # Access at http://127.0.0.1:8000
 ```
 
-Features:
+For local-only operation with Ollama:
+```bash
+ollama serve
+ollama pull llama3.2
+```
 
+### Features
+
+- Multi-provider LLM support with automatic detection
 - Live metric gauges (Temperature/Humidity/Pressure metaphor)
 - Trajectory-aware coupling mode detection
 - Vector Ψ visualization
@@ -228,7 +258,7 @@ semantic-climate-phase-space/
 │   ├── core_metrics.py     # Morgoulis (2025) - preserved with attribution
 │   ├── extensions.py       # Vector Ψ, attractors, trajectory dynamics
 │   └── api.py              # Function-based API for testing
-├── tests/                  # 60 passing tests
+├── tests/                  # 87 passing tests
 ├── semantic_climate_app/   # Real-time web application
 │   ├── backend/            # FastAPI + WebSocket
 │   └── frontend/           # Vanilla HTML/CSS/JS
@@ -241,7 +271,7 @@ semantic-climate-phase-space/
 # Run all tests
 pytest tests/ -v
 
-# Expected: 60 passed
+# Expected: 87 passed
 ```
 
 ## Attribution
