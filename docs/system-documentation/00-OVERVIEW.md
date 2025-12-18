@@ -78,7 +78,7 @@ semantic-climate-phase-space/
 ├── scripts/
 │   └── batch_analyze_conversations.py  # Archive analysis
 │
-├── tests/                         # Test suite (60+ tests)
+├── tests/                         # Test suite (87 tests)
 │
 └── docs/
     └── system-documentation/      # This documentation

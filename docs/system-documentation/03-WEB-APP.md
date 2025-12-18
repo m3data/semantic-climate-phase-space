@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Semantic Climate web application provides real-time analysis of human-AI dialogue through a local web interface. It connects to LLM providers (Ollama, Together AI) and optionally to Earthian BioSense for biosignal integration.
+The Semantic Climate web application provides real-time analysis of human-AI dialogue through a local web interface. It connects to multiple LLM providers (Ollama, Together AI, Anthropic, OpenAI) and optionally to Earthian BioSense for biosignal integration.
 
 ## Architecture
 
@@ -77,7 +77,7 @@ The Semantic Climate web application provides real-time analysis of human-AI dia
 ```python
 @app.on_event("startup")
 async def startup_event():
-    # Initialize embedding service (Ollama nomic-embed-text)
+    # Initialize embedding service (sentence-transformers all-mpnet-base-v2)
     embedding_service = EmbeddingService()
 
     # Initialize metrics service
@@ -95,18 +95,22 @@ async def startup_event():
 
 **Backends:**
 
-| Backend | Model | Dimensions |
-|---------|-------|------------|
-| Ollama | nomic-embed-text | 768 |
-| sentence-transformers | all-mpnet-base-v2 | 768 |
+| Backend | Model | Dimensions | Notes |
+|---------|-------|------------|-------|
+| sentence-transformers | all-mpnet-base-v2 | 768 | **Default** — recommended for semantic sensitivity |
+| Ollama | nomic-embed-text | 768 | Alternative — requires local Ollama server |
 
 **Usage:**
 ```python
 from embedding_service import EmbeddingService
 
+# Default: sentence-transformers (recommended)
+service = EmbeddingService()
+
+# Or explicitly configure:
 service = EmbeddingService(
-    model_name='nomic-embed-text',  # or 'all-mpnet-base-v2'
-    backend='ollama'                 # or 'sentence-transformers'
+    model_name='all-mpnet-base-v2',   # or 'nomic-embed-text' for Ollama
+    backend='sentence-transformers'    # or 'ollama'
 )
 
 # Single embedding
@@ -201,10 +205,14 @@ result = service.analyze(
 
 **Supported Providers:**
 
-| Provider | Client Class | Requirements |
-|----------|--------------|--------------|
-| Ollama | `OllamaClient` | Local `ollama serve` |
-| Together AI | `TogetherClient` | API key in `.env` |
+| Provider | Client Class | Requirements | Latency |
+|----------|--------------|--------------|---------|
+| Together AI | `TogetherClient` | `TOGETHER_API_KEY` in `.env` | 2-5s |
+| Ollama | `OllamaClient` | Local `ollama serve` | 30-120s |
+| Anthropic | `AnthropicClient` | `ANTHROPIC_API_KEY` in `.env` | 3-8s |
+| OpenAI | `OpenAIClient` | `OPENAI_API_KEY` in `.env` | 3-8s |
+
+**Note:** Cloud providers (Together AI recommended) significantly reduce latency confounds in semantic coupling measurements.
 
 **Usage:**
 ```python
@@ -344,13 +352,23 @@ EBS_PORT=8765
 ### Prerequisites
 
 ```bash
-# Ollama (for embeddings and local LLM)
-ollama serve
-ollama pull nomic-embed-text
-ollama pull llama3.2  # or preferred model
+# Install Python dependencies (includes sentence-transformers for embeddings)
+pip install -r semantic_climate_app/requirements.txt
+```
 
-# Python dependencies
-pip install fastapi uvicorn websockets python-dotenv
+**First run:** The embedding model (`all-mpnet-base-v2`, ~400MB) downloads automatically.
+
+**For cloud LLM providers (recommended):**
+```bash
+# Copy and configure API keys
+cp semantic_climate_app/.env.example semantic_climate_app/.env
+# Edit .env to add TOGETHER_API_KEY (or ANTHROPIC_API_KEY, OPENAI_API_KEY)
+```
+
+**For local LLM via Ollama (optional):**
+```bash
+ollama serve
+ollama pull llama3.2  # or preferred model
 ```
 
 ### Start Server
