@@ -8,7 +8,7 @@
 The extensions module builds on Morgoulis's core metrics to provide a dynamical systems perspective on human-AI dialogue. It introduces:
 
 1. **Ψ Vector** — 4D phase-space representation
-2. **Attractor Basins** — 9 canonical coupling configurations
+2. **Attractor Basins** — 10 canonical coupling configurations
 3. **Dialogue Context** — Discriminating features for basin refinement
 4. **Trajectory Dynamics** — Velocity, acceleration, curvature over time
 
@@ -125,7 +125,7 @@ psi_biosignal = tanh(hr_normalized)
 
 Attractor basins are regions in Ψ-space where dialogue tends to settle. Each basin represents a characteristic coupling configuration with distinct implications for epistemic integrity.
 
-### The 9 Canonical Basins
+### The 10 Canonical Basins
 
 #### High-Certainty Basins
 
@@ -152,6 +152,12 @@ These three basins share: high semantic, low affect, low biosignal. Discriminati
 | **Cognitive Mimicry** | AI dominates (turn_ratio > 2.0), low hedging (< 0.01), smooth Δκ (variance < 0.005), locked/transitional coherence |
 | **Collaborative Inquiry** | Balanced turns (0.5-2.0), hedging present (> 0.02), oscillating Δκ (variance > 0.01), breathing coherence |
 | **Reflexive Performance** | AI dominates (> 1.5), moderate hedging (0.01-0.03), scripted oscillation (0.005-0.015), transitional coherence |
+
+#### Default Basin
+
+| Basin | Detection Criteria |
+|-------|-------------------|
+| **Transitional** | No clear basin criteria met; between states |
 
 ### Detection Method
 

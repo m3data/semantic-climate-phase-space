@@ -34,7 +34,7 @@ This framework treats dialogue as a dynamical system, measuring how meaning move
 Extensions in this project add:
 
 - **Vector Ψ** - 4D phase-space representation (semantic, temporal, affective, biosignal)
-- **Attractor Basin Detection** - 7 canonical dialogue configurations
+- **Attractor Basin Detection** - 10 canonical dialogue configurations
 - **Trajectory Dynamics** - Velocity, acceleration, curvature of meaning movement
 - **Real-time Web Application** - Live semantic coupling analysis
 
@@ -240,15 +240,18 @@ Important: These are **proto-classifications** and should be interpreted context
 
 These proto-classifications represent relational configurations rather than mental contents.
 
-Seven canonical configurations in phase-space:
+Ten canonical configurations in phase-space:
 
-1. **Generative Flow** - High complexity, healthy rhythm
-2. **Vigilant Engagement** - Sustained focused attention
-3. **Contemplative Depth** - Deep exploration
-4. **Creative Tension** - Productive instability
-5. **Cognitive Mimicry** - Sycophantic pattern (risk)
-6. **Semantic Drift** - Gradual meaning divergence
-7. **Chaotic Fragmentation** - Incoherent coupling (risk)
+1. **Deep Resonance** - All substrates high, genuine mutual engagement
+2. **Collaborative Inquiry** - Genuine co-exploration with mutual uncertainty
+3. **Cognitive Mimicry** - Model performs engagement without genuine uncertainty (risk)
+4. **Reflexive Performance** - Model appears to self-examine but pattern-matches
+5. **Sycophantic Convergence** - High alignment, low curvature, low affect (risk)
+6. **Creative Dilation** - Divergent exploration with high affect
+7. **Generative Conflict** - Productive tension, high affect
+8. **Embodied Coherence** - Low semantic, high biosignal (body leads)
+9. **Dissociation** - All substrates low (risk)
+10. **Transitional** - No clear basin, between states
 
 ## Project Structure
 
@@ -258,7 +261,7 @@ semantic-climate-phase-space/
 │   ├── core_metrics.py     # Morgoulis (2025) - preserved with attribution
 │   ├── extensions.py       # Vector Ψ, attractors, trajectory dynamics
 │   └── api.py              # Function-based API for testing
-├── tests/                  # 87 passing tests
+├── tests/                  # 244 tests
 ├── semantic_climate_app/   # Real-time web application
 │   ├── backend/            # FastAPI + WebSocket
 │   └── frontend/           # Vanilla HTML/CSS/JS
@@ -271,7 +274,7 @@ semantic-climate-phase-space/
 # Run all tests
 pytest tests/ -v
 
-# Expected: 87 passed
+# Expected: 244 passed
 ```
 
 ## Attribution

@@ -37,7 +37,7 @@ This system provides tools for measuring and analyzing the **semantic climate** 
 │                SemanticClimateAnalyzer                          │
 │                    src/extensions.py                            │
 │    - Ψ vector computation (4 substrates)                        │
-│    - Attractor basin detection (9 basins)                       │
+│    - Attractor basin detection (10 basins)                      │
 │    - Dialogue context computation                               │
 │    - Trajectory dynamics                                        │
 └────────────────────────────┬────────────────────────────────────┘
@@ -78,7 +78,7 @@ semantic-climate-phase-space/
 ├── scripts/
 │   └── batch_analyze_conversations.py  # Archive analysis
 │
-├── tests/                         # Test suite (87 tests)
+├── tests/                         # Test suite (244 tests)
 │
 └── docs/
     └── system-documentation/      # This documentation
@@ -173,19 +173,20 @@ Four-dimensional phase space position:
 | Affective | Ψ_aff | Sentiment + hedging + vulnerability | [-1, 1] |
 | Biosignal | Ψ_bio | HR/HRV from EBS (optional) | [-1, 1] |
 
-### Attractor Basins (9 canonical configurations)
+### Attractor Basins (10 canonical configurations)
 
 | Basin | Characteristics |
 |-------|-----------------|
-| **Cognitive Mimicry** | High semantic, low affect, AI dominates, smooth Δκ |
+| **Deep Resonance** | All substrates high, genuine mutual engagement |
 | **Collaborative Inquiry** | High semantic, low affect, balanced turns, hedging present |
+| **Cognitive Mimicry** | High semantic, low affect, AI dominates, smooth Δκ |
 | **Reflexive Performance** | High semantic, performed uncertainty, scripted oscillation |
 | **Sycophantic Convergence** | High alignment, low Δκ, low affect |
 | **Creative Dilation** | High Δκ, high affect, divergent exploration |
 | **Generative Conflict** | High divergent semantic, high affect, productive tension |
-| **Deep Resonance** | All substrates high |
 | **Embodied Coherence** | Low semantic, high biosignal |
 | **Dissociation** | All substrates low |
+| **Transitional** | No clear basin, between states |
 
 ### Coupling Modes (Trajectory-aware)
 

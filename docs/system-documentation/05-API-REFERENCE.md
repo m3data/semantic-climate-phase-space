@@ -4,10 +4,33 @@
 
 ```python
 from src import (
-    SemanticComplexityAnalyzer,  # Core metrics (Morgoulis)
-    SemanticClimateAnalyzer,     # Extended analysis (Ψ, basins)
-    TrajectoryBuffer,            # Trajectory storage
-    # Function API
+    # Core metrics (Morgoulis 2025)
+    SemanticComplexityAnalyzer,
+
+    # Extended analysis (Ψ, basins, trajectory)
+    SemanticClimateAnalyzer,
+    TrajectoryBuffer,
+    TrajectoryStateVector,
+
+    # Modular components (v0.3.0)
+    BasinDetector,
+    BasinHistory,
+    IntegrityAnalyzer,
+    TransformationDetector,
+    SoftStateInference,
+    HysteresisConfig,
+
+    # Standalone functions
+    compute_trajectory_derivatives,
+    compute_semantic_substrate,
+    compute_temporal_substrate,
+    compute_affective_substrate,
+    compute_biosignal_substrate,
+    compute_dialogue_context,
+    detect_attractor_basin,
+    generate_movement_annotation,
+
+    # Function API (testing/research)
     semantic_curvature,
     dfa_alpha,
     entropy_shift,
