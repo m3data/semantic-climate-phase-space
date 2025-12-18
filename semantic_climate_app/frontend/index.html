@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Climate Chat</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/regular/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>Semantic Climate Chat</h1>
+            <div class="header-controls">
+                <button id="settingsBtn" class="btn-secondary">
+                    <i class="ph ph-gear"></i> Settings
+                </button>
+                <button id="exportBtn" class="btn-secondary" disabled>
+                    <i class="ph ph-stop-circle"></i> End Session
+                </button>
+                <button id="resetBtn" class="btn-secondary" disabled>
+                    <i class="ph ph-arrows-clockwise"></i> Reset
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div id="chatMessages" class="chat-messages">
+                    <div class="system-message">
+                        <i class="ph ph-hand-waving"></i> Welcome! Click Settings to select your Ollama model and start chatting.
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <textarea
+                        id="chatInput"
+                        placeholder="Select a model first..."
+                        rows="1"
+                        disabled
+                    ></textarea>
+                    <button id="sendBtn" class="btn-primary" disabled>Send</button>
+                </div>
+            </div>
+
+            <!-- Climate Panel -->
+            <div class="climate-panel">
+                <div class="climate-header">
+                    <h2>Semantic Climate</h2>
+                    <button id="toggleDetailsBtn" class="toggle-details-btn" title="Show/hide metric details">
+                        <span>Details</span>
+                        <i class="ph ph-caret-down"></i>
+                    </button>
+                </div>
+
+                <!-- EBS Biosignal Status -->
+                <div id="ebsStatusPanel" class="ebs-status-panel">
+                    <div class="ebs-status-row">
+                        <span id="ebsConnectionStatus" class="ebs-connection disconnected">
+                            <i class="ph ph-heart"></i>
+                            <span class="ebs-label">EBS</span>
+                        </span>
+                        <span id="ebsHR" class="ebs-hr">--</span>
+                        <span class="ebs-hr-label">BPM</span>
+                        <span id="ebsPhaseLabel" class="ebs-phase-label">--</span>
+                    </div>
+                    <button id="startSessionBtn" class="btn-start-session" style="display: none;">
+                        <i class="ph ph-play-circle"></i> Start Session
+                    </button>
+                </div>
+
+                <!-- Turn Counter -->
+                <div class="turn-counter">
+                    Turns: <span id="turnCount">0</span> / <span id="minTurns">10</span>
+                    <span id="analysisStatus" class="status-waiting">Waiting for data...</span>
+                </div>
+
+                <!-- Metrics Gauges (revealable) -->
+                <div class="metrics-container revealable hidden">
+                    <div class="metric-gauge">
+                        <label><i class="ph ph-thermometer"></i> Temperature (Δκ)</label>
+                        <div class="gauge-bar">
+                            <div id="tempGauge" class="gauge-fill gauge-temp" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span id="tempValue" class="value">--</span>
+                            <span id="tempLevel" class="level-badge">--</span>
+                        </div>
+                        <div class="gauge-label">Inferential complexity</div>
+                    </div>
+
+                    <div class="metric-gauge">
+                        <label><i class="ph ph-drop"></i> Humidity (ΔH)</label>
+                        <div class="gauge-bar">
+                            <div id="humidityGauge" class="gauge-fill gauge-humidity" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span id="humidityValue" class="value">--</span>
+                            <span id="humidityLevel" class="level-badge">--</span>
+                        </div>
+                        <div class="gauge-label">Conceptual diversity</div>
+                    </div>
+
+                    <div class="metric-gauge">
+                        <label><i class="ph ph-gauge"></i> Pressure (α)</label>
+                        <div class="gauge-bar">
+                            <div id="pressureGauge" class="gauge-fill gauge-pressure" style="width: 0%"></div>
+                        </div>
+                        <div class="gauge-info">
+                            <span id="pressureValue" class="value">--</span>
+                            <span id="pressureLevel" class="level-badge">--</span>
+                        </div>
+                        <div class="gauge-label">Fractal coherence</div>
+                    </div>
+                </div>
+
+                <!-- Coupling Mode -->
+                <div class="coupling-mode">
+                    <h3>Coupling Mode</h3>
+                    <div id="couplingMode" class="mode-indicator mode-waiting">
+                        <i class="mode-icon ph ph-circle"></i>
+                        <span class="mode-text">Waiting for analysis...</span>
+                        <span id="modeConfidence" class="mode-confidence"></span>
+                    </div>
+                    <div class="mode-description" id="modeDescription">
+                        Chat for at least 10 turns to begin analysis
+                    </div>
+
+                    <!-- Trajectory Indicator -->
+                    <div id="trajectoryIndicator" class="trajectory-indicator" style="display: none;">
+                        <i class="trajectory-icon ph ph-minus"></i>
+                        <span class="trajectory-text">Stable</span>
+                    </div>
+
+                    <!-- Epistemic Risk Indicator -->
+                    <div id="riskIndicator" class="risk-indicator risk-low" style="display: none;">
+                        <span class="risk-label">LOW</span>
+                        <span class="risk-text">Healthy coupling dynamics</span>
+                    </div>
+
+                    <!-- Semantic Coherence Indicator -->
+                    <div id="coherenceIndicator" class="coherence-indicator" style="display: none;">
+                        <div class="coherence-header">
+                            <span class="coherence-label">BREATHING</span>
+                            <span class="coherence-score">75%</span>
+                        </div>
+                        <span class="coherence-text">Healthy rhythm — meaning moves naturally</span>
+                        <span class="coherence-autocorr">r=-0.25</span>
+                    </div>
+                </div>
+
+                <!-- Vector Ψ (Phase-Space) - revealable -->
+                <div class="psi-vector-section revealable hidden">
+                    <h3>4D Phase-Space (Ψ)</h3>
+                    <div class="psi-components">
+                        <div class="psi-component">
+                            <label>Ψ_semantic</label>
+                            <div class="psi-bar">
+                                <div id="psiSemanticBar" class="psi-fill psi-semantic" style="width: 50%"></div>
+                            </div>
+                            <span id="psiSemanticValue" class="psi-value">--</span>
+                        </div>
+                        <div class="psi-component">
+                            <label>Ψ_temporal</label>
+                            <div class="psi-bar">
+                                <div id="psiTemporalBar" class="psi-fill psi-temporal" style="width: 50%"></div>
+                            </div>
+                            <span id="psiTemporalValue" class="psi-value">--</span>
+                        </div>
+                        <div class="psi-component">
+                            <label>Ψ_affective</label>
+                            <div class="psi-bar">
+                                <div id="psiAffectiveBar" class="psi-fill psi-affective" style="width: 50%"></div>
+                            </div>
+                            <span id="psiAffectiveValue" class="psi-value">--</span>
+                        </div>
+                        <div class="psi-component">
+                            <label>Ψ_biosignal</label>
+                            <div class="psi-bar">
+                                <div id="psiBiosignalBar" class="psi-fill psi-biosignal" style="width: 50%"></div>
+                            </div>
+                            <span id="psiBiosignalValue" class="psi-value">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Attractor Basin -->
+                    <div class="attractor-basin">
+                        <label>Attractor Basin:</label>
+                        <div id="attractorBasin" class="basin-indicator">
+                            <span id="basinName" class="basin-name">Waiting...</span>
+                            <span id="basinConfidence" class="basin-confidence">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Affective Substrate (shown when available) -->
+                    <div id="affectiveSubstrate" class="affective-details" style="display: none;">
+                        <h4>Affective Substrate</h4>
+                        <div class="affective-metrics">
+                            <div class="affective-metric">
+                                <label>Hedging:</label>
+                                <span id="affHedging">--</span>
+                            </div>
+                            <div class="affective-metric">
+                                <label>Vulnerability:</label>
+                                <span id="affVulnerability">--</span>
+                            </div>
+                            <div class="affective-metric">
+                                <label>Confidence var:</label>
+                                <span id="affConfidence">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metric History Chart - revealable -->
+                <div class="chart-container revealable hidden">
+                    <h3>Metric History</h3>
+                    <canvas id="metricsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal hidden">
+        <div class="modal-content">
+            <h2><i class="ph ph-gear"></i> Configuration</h2>
+
+            <div class="form-group">
+                <label>Provider Status</label>
+                <div id="providerStatus" class="status-indicator">
+                    <i class="spinner ph ph-circle-notch"></i> Checking providers...
+                </div>
+            </div>
+
+            <!-- Provider Selection -->
+            <div class="form-group" id="providerSelectGroup" style="display: none;">
+                <label>Select Provider</label>
+                <div id="providerList" class="provider-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Model Selection -->
+            <div class="form-group" id="modelSelectGroup" style="display: none;">
+                <label>Select Model</label>
+                <select id="modelSelect" size="5">
+                    <!-- Populated dynamically -->
+                </select>
+                <button id="refreshModelsBtn" class="btn-link">
+                    <i class="ph ph-arrows-clockwise"></i> Refresh
+                </button>
+            </div>
+
+            <!-- Provider-specific notes -->
+            <div id="providerNote" class="provider-note" style="display: none;">
+                <!-- Shows helpful info about selected provider -->
+            </div>
+
+            <div id="noProvidersMessage" class="instructions hidden">
+                <p><strong>No providers available.</strong></p>
+                <p>Options:</p>
+                <ul>
+                    <li><strong>Ollama (local):</strong> Start with <code>ollama serve</code></li>
+                    <li><strong>Together AI (fast):</strong> Set <code>TOGETHER_API_KEY</code> in <code>.env</code></li>
+                </ul>
+                <button id="retryProvidersBtn" class="btn-secondary">
+                    <i class="ph ph-arrows-clockwise"></i> Retry
+                </button>
+            </div>
+
+            <div class="modal-actions">
+                <button id="cancelBtn" class="btn-secondary">Cancel</button>
+                <button id="saveBtn" class="btn-primary" disabled>Start Chat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/websocket.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/js/climate.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+# Upstream reference repo (local copy or submodule)
+upstream-reference/
+
+# Archived messy hybrid prototype
+archive-hybrid/
+
+# Claude Files
+CLAUDE.md
+.claude/
+claude-dev/
+
+# Claude diff artefacts
+diff/
+*.diff
+*.patch
+*.bak
+3-way-diff-plan.md
+docs/3-way-diff/
+
+# Local development
+.env
+.DS_Store
+.vscode/
+.idea/
+__pycache__/
+node_modules/
+dist/
+build/
+
+# Research notes
+research/
+
+# Session data (contains conversation content)
+sessions/
+
+# Context building files
+context-building/

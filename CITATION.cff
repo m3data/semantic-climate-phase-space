@@ -1,0 +1,46 @@
+cff-version: 1.2.0
+title: Semantic Climate Phase Space
+message: >-
+  If you use this software, please cite both this project
+  and the original semantic metrics by Morgoulis (2025).
+type: software
+
+authors:
+  - name: Semantic Climate Phase Space Project
+  - given-names: Mathew Mark
+    family-names: Mytka
+    affiliation: EarthianLab
+
+repository-code: https://github.com/m3data/semantic-climate-phase-space
+url: https://github.com/m3data/semantic-climate-phase-space
+
+abstract: >-
+  An extensible implementation of semantic complexity metrics
+  derived from Morgoulis (2025), expanded into a 4D phase-space
+  model (Vector Ψ) with trajectory dynamics, attractor basin
+  detection, and a real-time web application for studying
+  semantic–somatic coupling in human–AI dialogue.
+
+keywords:
+  - semantic coupling
+  - cognitive complexity
+  - human-AI dialogue
+  - phase space
+  - dynamical systems
+  - NLP
+
+license: LicenseRef-ESL-A
+version: 0.1.0
+date-released: 2025-12-06
+
+references:
+  - type: software
+    title: Semantic Complexity Metrics (Δκ, α, ΔH)
+    authors:
+      - family-names: Morgoulis
+        given-names: Daria
+    year: 2025
+    url: https://github.com/daryamorgoulis/4d-semantic-coupling
+    notes: >-
+      Core metrics (Semantic Curvature, Fractal Similarity,
+      Entropy Shift) are preserved from this work with attribution.

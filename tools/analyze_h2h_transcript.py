@@ -26,7 +26,7 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.core_metrics import SemanticComplexityAnalyzer
-from src.extensions import SemanticClimateAnalyzer
+from src import SemanticClimateAnalyzer
 from src.schema import get_current_versions, CORE_METRICS_VERSION
 from sentence_transformers import SentenceTransformer
 
