@@ -98,25 +98,30 @@ Researchers can now interrogate meaning-making, coherence formation, destabiliza
 ```bash
 git clone https://github.com/m3data/semantic-climate-phase-space.git
 cd semantic-climate-phase-space
+
+# Core library only (lightweight)
+pip install -r requirements.txt
+
+# Full web application (includes embeddings, API server)
 pip install -r semantic_climate_app/requirements.txt
 ```
 
 ### Computational Requirements
 
-This framework uses `sentence-transformers` with `all-mpnet-base-v2` for embedding generation. Be aware:
+**Core library** (`requirements.txt`):
+- Lightweight install (~50MB)
+- Dependencies: numpy, scipy, scikit-learn, pandas
+- Optional: vaderSentiment for affective substrate
 
-- **PyTorch dependency** (~2GB download on first install)
-- **Model download** (~400MB on first run)
-- **GPU recommended** for reasonable embedding speed (CPU works but slower)
-- **Memory:** 4GB+ RAM recommended for embedding operations
+**Web application** (`semantic_climate_app/requirements.txt`):
+- PyTorch dependency (~2GB download on first install)
+- Embedding model download (~400MB on first run)
+- GPU recommended for embedding speed (CPU works but slower)
+- Memory: 4GB+ RAM recommended
 
 For local LLM inference via Ollama, additional resources required:
 - **7B models:** ~8GB RAM/VRAM
 - **70B models:** ~40GB+ RAM/VRAM (or quantized versions)
-
-**Core dependencies:** numpy, scipy, scikit-learn, pandas, sentence-transformers, torch, fastapi
-
-**Optional:** vaderSentiment (affective substrate), anthropic, openai (cloud providers)
 
 ## Quick Start
 
