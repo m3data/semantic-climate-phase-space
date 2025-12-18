@@ -190,20 +190,42 @@ Real-time semantic coupling analysis with multi-provider LLM support.
 
 **Note:** Cloud providers (Together AI recommended) significantly reduce latency confounds in semantic coupling measurements. Local inference via Ollama provides privacy but introduces variable response times.
 
+### Configuration
+
+Create a `.env` file for API keys:
+
+```bash
+cp semantic_climate_app/.env.example semantic_climate_app/.env
+```
+
+Edit `.env` with your API keys (at least one provider required):
+
+```env
+# Together AI (recommended for research - fast, reduces latency confound)
+# Get key: https://api.together.xyz/
+TOGETHER_API_KEY=your_key_here
+
+# Anthropic (optional)
+# Get key: https://console.anthropic.com/
+ANTHROPIC_API_KEY=your_key_here
+
+# OpenAI (optional)
+# Get key: https://platform.openai.com/
+OPENAI_API_KEY=your_key_here
+
+# Ollama requires no API key - runs locally
+```
+
 ### Running the Web App
 
 ```bash
-# Configure API keys (copy and edit)
-cp semantic_climate_app/.env.example semantic_climate_app/.env
-
-# Run web app
 cd semantic_climate_app
 python backend/main.py
 
 # Access at http://127.0.0.1:8000
 ```
 
-For local-only operation with Ollama:
+For local-only operation with Ollama (no API keys needed):
 ```bash
 ollama serve
 ollama pull llama3.2
