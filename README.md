@@ -295,7 +295,7 @@ The foundational metrics implementation is by **Daria Morgoulis**:
 The following are original contributions:
 
 - Vector Ψ representation (4D phase-space)
-- Attractor basin framework (7 configurations)
+- Attractor basin framework (10 configurations)
 - Trajectory dynamics (velocity, acceleration, curvature)
 - Substrate computations (temporal, affective, biosignal)
 - Semantic Climate web application
