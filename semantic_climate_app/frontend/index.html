@@ -199,7 +199,10 @@
 
                     <!-- Affective Substrate (shown when available) -->
                     <div id="affectiveSubstrate" class="affective-details" style="display: none;">
-                        <h4>Affective Substrate</h4>
+                        <div class="affective-header">
+                            <h4>Affective Substrate</h4>
+                            <span id="affSource" class="affective-source">VADER</span>
+                        </div>
                         <div class="affective-metrics">
                             <div class="affective-metric">
                                 <label>Hedging:</label>
@@ -212,6 +215,33 @@
                             <div class="affective-metric">
                                 <label>Confidence var:</label>
                                 <span id="affConfidence">--</span>
+                            </div>
+                        </div>
+
+                        <!-- GoEmotions Extended (shown in hybrid mode) -->
+                        <div id="emotionExtended" class="emotion-extended" style="display: none;">
+                            <!-- Epistemic Trajectory -->
+                            <div class="emotion-trajectory">
+                                <div class="trajectory-header">
+                                    <label><i class="ph ph-brain"></i> Epistemic</label>
+                                    <span id="epistemicMean" class="trajectory-mean">--</span>
+                                </div>
+                                <div id="epistemicSparkline" class="sparkline-container"></div>
+                            </div>
+
+                            <!-- Safety Trajectory -->
+                            <div class="emotion-trajectory">
+                                <div class="trajectory-header">
+                                    <label><i class="ph ph-shield-check"></i> Safety</label>
+                                    <span id="safetyMean" class="trajectory-mean">--</span>
+                                </div>
+                                <div id="safetySparkline" class="sparkline-container"></div>
+                            </div>
+
+                            <!-- Top Emotions -->
+                            <div class="top-emotions">
+                                <label>Active emotions:</label>
+                                <div id="topEmotionsTags" class="emotion-tags"></div>
                             </div>
                         </div>
                     </div>

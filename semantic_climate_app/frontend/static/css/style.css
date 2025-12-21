@@ -1463,3 +1463,175 @@ h2 .ph {
     font-style: italic;
     margin-top: 0.75rem;
 }
+
+/* ===========================================
+   GoEmotions Extended Affective Display
+   =========================================== */
+
+/* Affective header with source badge */
+.affective-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.affective-header h4 {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.affective-source {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.affective-source.source-vader {
+    background: rgba(150, 150, 150, 0.2);
+    color: var(--text-muted);
+}
+
+.affective-source.source-hybrid {
+    background: rgba(180, 140, 200, 0.2);
+    color: rgb(180, 140, 200);
+}
+
+/* Emotion extended section */
+.emotion-extended {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+/* Emotion trajectory rows */
+.emotion-trajectory {
+    margin-bottom: 10px;
+}
+
+.trajectory-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.trajectory-header label {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.trajectory-header label i {
+    font-size: 12px;
+}
+
+.trajectory-mean {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 6px;
+    border-radius: 3px;
+}
+
+.trajectory-mean.trajectory-high {
+    background: rgba(130, 180, 160, 0.25);
+    color: rgb(130, 180, 160);
+}
+
+.trajectory-mean.trajectory-positive {
+    background: rgba(130, 180, 160, 0.15);
+    color: rgb(130, 180, 160);
+}
+
+.trajectory-mean.trajectory-neutral {
+    background: rgba(150, 150, 150, 0.15);
+    color: var(--text-muted);
+}
+
+.trajectory-mean.trajectory-negative {
+    background: rgba(195, 140, 95, 0.15);
+    color: rgb(195, 140, 95);
+}
+
+.trajectory-mean.trajectory-low {
+    background: rgba(205, 110, 70, 0.2);
+    color: rgb(205, 110, 70);
+}
+
+/* Sparkline container */
+.sparkline-container {
+    height: 24px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.sparkline-svg {
+    display: block;
+}
+
+/* Top emotions section */
+.top-emotions {
+    margin-top: 12px;
+}
+
+.top-emotions label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.emotion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.emotion-tag {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 400;
+    cursor: default;
+}
+
+/* Emotion category colors */
+.emotion-tag.emotion-epistemic {
+    background: rgba(180, 140, 200, 0.2);
+    color: rgb(180, 140, 200);
+}
+
+.emotion-tag.emotion-safety-pos {
+    background: rgba(130, 180, 160, 0.2);
+    color: rgb(130, 180, 160);
+}
+
+.emotion-tag.emotion-safety-neg {
+    background: rgba(205, 110, 70, 0.2);
+    color: rgb(205, 110, 70);
+}
+
+.emotion-tag.emotion-positive {
+    background: rgba(195, 170, 95, 0.2);
+    color: rgb(195, 170, 95);
+}
+
+.emotion-tag.emotion-negative {
+    background: rgba(175, 130, 140, 0.2);
+    color: rgb(175, 130, 140);
+}
+
+.emotion-tag.emotion-neutral {
+    background: rgba(150, 150, 150, 0.15);
+    color: var(--text-muted);
+}

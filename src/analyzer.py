@@ -87,7 +87,8 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
         bootstrap_iterations: int = 1000,
         track_history: bool = True,
         compute_integrity: bool = True,
-        emotion_service=None
+        emotion_service=None,
+        debug_timing: bool = False
     ):
         """
         Initialize the extended analyzer.
@@ -99,12 +100,14 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             compute_integrity: Whether to compute trajectory integrity
             emotion_service: Optional EmotionService for GoEmotions-based
                 affective analysis. If None, uses VADER-only fast path.
+            debug_timing: Whether to print timing information for performance debugging
         """
         super().__init__(random_state=random_state, bootstrap_iterations=bootstrap_iterations)
 
         self.track_history = track_history
         self.compute_integrity = compute_integrity
         self.emotion_service = emotion_service
+        self.debug_timing = debug_timing
 
         # Initialize components based on flags
         if track_history:
@@ -204,11 +207,16 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
         # Affective substrate (from turn texts if available)
         # Uses hybrid VADER + GoEmotions if emotion_service is configured
         if turn_texts is not None and len(turn_texts) > 0:
+            if self.debug_timing:
+                import time as _time
+                _ta = _time.time()
             affective_result = compute_affective_substrate(
                 turn_texts=turn_texts,
                 embeddings=dialogue_embeddings,
                 emotion_service=self.emotion_service
             )
+            if self.debug_timing:
+                print(f"    [TIMING] affective_substrate: {int((_time.time()-_ta)*1000)}ms", flush=True)
         else:
             affective_result = {
                 'psi_affective': 0.0,
@@ -238,6 +246,9 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             self.trajectory.append(psi_vector)
 
         # === 5. Compute dialogue context for refined basin detection ===
+        if self.debug_timing:
+            import time as _time
+            _tc = _time.time()
         dialogue_context = compute_dialogue_context(
             turn_texts=turn_texts,
             turn_speakers=turn_speakers,
@@ -245,8 +256,12 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             coherence_pattern=coherence_pattern,
             hedging_density=affective_result.get('hedging_density', 0.0)
         )
+        if self.debug_timing:
+            print(f"    [TIMING] dialogue_context: {int((_time.time()-_tc)*1000)}ms", flush=True)
 
         # === 6. Detect attractor basin ===
+        if self.debug_timing:
+            _td = _time.time()
         if self.track_history and self.basin_history is not None:
             # Use hysteresis-aware detection with history
             basin_name, basin_confidence, basin_metadata = self.basin_detector.detect(
@@ -265,8 +280,12 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
                 dialogue_context=dialogue_context,
                 basin_history=None
             )
+        if self.debug_timing:
+            print(f"    [TIMING] basin_detect: {int((_time.time()-_td)*1000)}ms", flush=True)
 
         # === 7. Calculate trajectory dynamics ===
+        if self.debug_timing:
+            _te = _time.time()
         # Use internal trajectory if tracking, otherwise build from legacy parameter
         if self.track_history and self.trajectory is not None:
             trajectory_buffer = self.trajectory
@@ -281,8 +300,12 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
         trajectory_deriv = compute_trajectory_derivatives(trajectory_buffer)
         attractor_dyn = self._compute_attractor_dynamics(psi_vector, basin_name, trajectory_buffer)
         flow_field = self._compute_flow_field_properties(psi_vector, trajectory_buffer)
+        if self.debug_timing:
+            print(f"    [TIMING] traj_dynamics: {int((_time.time()-_te)*1000)}ms", flush=True)
 
         # === 7.5. Movement-preserving classification (v0.3.0+) ===
+        if self.debug_timing:
+            _tf = _time.time()
         # Compute soft membership
         soft_inference = self.basin_detector.compute_soft_membership(
             psi_vector=psi_vector,
@@ -325,8 +348,12 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             dwell_time=basin_metadata.get('residence_time', 0),
             movement_annotation=movement_annotation
         )
+        if self.debug_timing:
+            print(f"    [TIMING] movement_class: {int((_time.time()-_tf)*1000)}ms", flush=True)
 
         # === 8. Compute trajectory integrity ===
+        if self.debug_timing:
+            _tg = _time.time()
         if self.compute_integrity and self.integrity_analyzer is not None and trajectory_buffer is not None:
             trajectory_integrity = self.integrity_analyzer.compute(
                 trajectory=trajectory_buffer,
@@ -334,6 +361,8 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             )
         else:
             trajectory_integrity = None
+        if self.debug_timing:
+            print(f"    [TIMING] integrity: {int((_time.time()-_tg)*1000)}ms", flush=True)
 
         # === 9. Composite Ψ (scalar for backward compatibility) ===
         if psi_biosignal is not None:

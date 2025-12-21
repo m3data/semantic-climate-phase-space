@@ -28,6 +28,7 @@ Classes:
 
 from typing import Optional, TYPE_CHECKING
 import numpy as np
+from scipy.spatial.distance import pdist, squareform
 
 if TYPE_CHECKING:
     from .trajectory import TrajectoryBuffer
@@ -221,23 +222,22 @@ class IntegrityAnalyzer:
 
         traj_arr = np.array(traj_points)
         n_points = len(traj_arr)
-
-        # Compute pairwise distances
-        recurrence_count = 0
-        total_pairs = 0
         threshold = 0.1  # Distance threshold for "nearby"
 
-        for i in range(n_points):
-            for j in range(i + 2, n_points):  # Skip adjacent points
-                dist = np.linalg.norm(traj_arr[i] - traj_arr[j])
-                if dist < threshold:
-                    recurrence_count += 1
-                total_pairs += 1
+        # Vectorized pairwise distance computation (O(n²) but in C, not Python)
+        dist_matrix = squareform(pdist(traj_arr, metric='euclidean'))
 
+        # Get upper triangle excluding diagonal and adjacent pairs (k=2 means skip k diagonals)
+        # This gives us pairs (i, j) where j >= i + 2
+        upper_mask = np.triu(np.ones((n_points, n_points), dtype=bool), k=2)
+        non_adjacent_distances = dist_matrix[upper_mask]
+
+        total_pairs = len(non_adjacent_distances)
         if total_pairs == 0:
             return 0.0
 
-        # Normalize by total possible pairs
+        # Count recurrences (distances below threshold)
+        recurrence_count = np.sum(non_adjacent_distances < threshold)
         recurrence_rate = recurrence_count / total_pairs
 
         # Scale to make it more sensitive

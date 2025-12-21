@@ -72,7 +72,7 @@ class CouplingMode:
 class MetricsService:
     """Wrapper around SemanticClimateAnalyzer for web app."""
 
-    def __init__(self, enable_goemotions: bool = True):
+    def __init__(self, enable_goemotions: bool = True, debug_timing: bool = False):
         """
         Initialize metrics service.
 
@@ -80,7 +80,10 @@ class MetricsService:
             enable_goemotions: If True, loads GoEmotions model for rich
                 emotion analysis. Model loads lazily on first use.
                 Set False for faster startup / lower memory.
+            debug_timing: If True, prints timing information for performance debugging.
         """
+        self.debug_timing = debug_timing
+
         # Initialize emotion service (lazy load to avoid slow startup)
         if enable_goemotions:
             self.emotion_service = EmotionService(lazy_load=True)
@@ -88,7 +91,8 @@ class MetricsService:
             self.emotion_service = None
 
         self.analyzer = SemanticClimateAnalyzer(
-            emotion_service=self.emotion_service
+            emotion_service=self.emotion_service,
+            debug_timing=debug_timing
         )
 
     def analyze(
@@ -135,8 +139,14 @@ class MetricsService:
                 'affective_substrate': {...} or None
             }
         """
+        if self.debug_timing:
+            import time
+            _t0 = time.time()
+
         # Use Morgoulis's analyzer (via SemanticClimateAnalyzer which extends it)
         results = self.analyzer.calculate_all_metrics(embeddings)
+        if self.debug_timing:
+            print(f"  [TIMING] core_metrics: {int((time.time()-_t0)*1000)}ms", flush=True)
 
         # Interpret as climate
         climate = {
@@ -190,6 +200,9 @@ class MetricsService:
             effective_coherence_pattern = coherence.pattern
 
         try:
+            if self.debug_timing:
+                import time
+                _t2 = time.time()
             psi_result = self.analyzer.compute_coupling_coefficient(
                 dialogue_embeddings=embeddings,
                 turn_texts=turn_texts,
@@ -199,6 +212,8 @@ class MetricsService:
                 biosignal_data=biosignal_data,
                 coherence_pattern=effective_coherence_pattern
             )
+            if self.debug_timing:
+                print(f"  [TIMING] coupling_coeff: {int((time.time()-_t2)*1000)}ms (turns={len(turn_texts) if turn_texts else 0})", flush=True)
 
             # Extract vector components
             psi_position = psi_result['psi_state']['position']

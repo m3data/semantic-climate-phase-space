@@ -419,12 +419,191 @@ function updateAffectiveSubstrate(affective_substrate) {
     const affectiveDiv = document.getElementById('affectiveSubstrate');
     affectiveDiv.style.display = 'block';
 
+    // Update basic metrics
     document.getElementById('affHedging').textContent =
         affective_substrate.hedging_density.toFixed(4);
     document.getElementById('affVulnerability').textContent =
         affective_substrate.vulnerability_score.toFixed(4);
     document.getElementById('affConfidence').textContent =
         affective_substrate.confidence_variance.toFixed(4);
+
+    // Update source indicator
+    const sourceEl = document.getElementById('affSource');
+    const source = affective_substrate.source || 'vader';
+    if (sourceEl) {
+        sourceEl.textContent = source.toUpperCase();
+        sourceEl.className = 'affective-source source-' + source;
+    }
+
+    // Handle GoEmotions extended data (hybrid mode)
+    const emotionExtended = document.getElementById('emotionExtended');
+    if (source === 'hybrid' && emotionExtended) {
+        emotionExtended.style.display = 'block';
+
+        // Update epistemic trajectory
+        const epistemicMean = document.getElementById('epistemicMean');
+        if (epistemicMean && affective_substrate.epistemic_mean !== undefined) {
+            const val = affective_substrate.epistemic_mean;
+            epistemicMean.textContent = val.toFixed(2);
+            epistemicMean.className = 'trajectory-mean ' + getTrajectoryClass(val);
+        }
+
+        // Render epistemic sparkline
+        // epistemic_trajectory is {curiosity: [...], confusion: [...], realization: [...], surprise: [...]}
+        // Compute per-turn max across all epistemic emotions
+        if (affective_substrate.epistemic_trajectory) {
+            const epistemicValues = computeEpistemicPerTurn(affective_substrate.epistemic_trajectory);
+            renderSparkline('epistemicSparkline', epistemicValues, 'epistemic');
+        }
+
+        // Update safety trajectory
+        const safetyMean = document.getElementById('safetyMean');
+        if (safetyMean && affective_substrate.safety_mean !== undefined) {
+            const val = affective_substrate.safety_mean;
+            safetyMean.textContent = val.toFixed(2);
+            safetyMean.className = 'trajectory-mean ' + getTrajectoryClass(val);
+        }
+
+        // Render safety sparkline
+        // safety_trajectory has {safety_positive: [...], safety_negative: [...], safety_net: [...]}
+        // Use safety_net which is already (positive - negative)
+        if (affective_substrate.safety_trajectory && affective_substrate.safety_trajectory.safety_net) {
+            renderSparkline('safetySparkline', affective_substrate.safety_trajectory.safety_net, 'safety');
+        }
+
+        // Render top emotions
+        if (affective_substrate.top_emotions) {
+            renderTopEmotions(affective_substrate.top_emotions);
+        }
+    } else if (emotionExtended) {
+        emotionExtended.style.display = 'none';
+    }
+}
+
+// Get CSS class based on trajectory value
+function getTrajectoryClass(value) {
+    if (value > 0.3) return 'trajectory-high';
+    if (value > 0) return 'trajectory-positive';
+    if (value < -0.3) return 'trajectory-low';
+    if (value < 0) return 'trajectory-negative';
+    return 'trajectory-neutral';
+}
+
+// Compute per-turn epistemic score from trajectory object
+// Takes {curiosity: [...], confusion: [...], realization: [...], surprise: [...]}
+// Returns array of per-turn max values
+function computeEpistemicPerTurn(epistemicTrajectory) {
+    const emotions = ['curiosity', 'confusion', 'realization', 'surprise'];
+    const arrays = emotions.map(e => epistemicTrajectory[e] || []);
+
+    if (arrays.length === 0 || arrays[0].length === 0) return [];
+
+    const numTurns = arrays[0].length;
+    const result = [];
+
+    for (let i = 0; i < numTurns; i++) {
+        // Take max across all epistemic emotions for this turn
+        let maxVal = 0;
+        for (const arr of arrays) {
+            if (arr[i] !== undefined && arr[i] > maxVal) {
+                maxVal = arr[i];
+            }
+        }
+        result.push(maxVal);
+    }
+
+    return result;
+}
+
+// Render a simple sparkline using SVG
+function renderSparkline(containerId, values, type) {
+    const container = document.getElementById(containerId);
+    if (!container || !values || values.length === 0) return;
+
+    const width = container.offsetWidth || 120;
+    const height = 24;
+    const padding = 2;
+
+    // Values are probabilities [0, 1] — map to [height-padding, padding]
+    const minVal = 0;
+    const maxVal = 1;
+    const range = maxVal - minVal;
+
+    const points = values.map((v, i) => {
+        const x = padding + (i / Math.max(1, values.length - 1)) * (width - 2 * padding);
+        const y = height - padding - ((v - minVal) / range) * (height - 2 * padding);
+        return `${x},${y}`;
+    }).join(' ');
+
+    // Baseline at bottom (y = 0)
+    const baselineY = height - padding;
+
+    const strokeColor = type === 'epistemic' ? 'rgb(180, 140, 200)' : 'rgb(130, 180, 160)';
+    const fillColor = type === 'epistemic' ? 'rgba(180, 140, 200, 0.2)' : 'rgba(130, 180, 160, 0.2)';
+
+    // Create polygon points for fill (close the path at the bottom)
+    const firstX = padding;
+    const lastX = padding + ((values.length - 1) / Math.max(1, values.length - 1)) * (width - 2 * padding);
+    const fillPoints = `${firstX},${baselineY} ${points} ${lastX},${baselineY}`;
+
+    container.innerHTML = `
+        <svg width="${width}" height="${height}" class="sparkline-svg">
+            <polygon points="${fillPoints}" fill="${fillColor}"/>
+            <polyline points="${points}" fill="none" stroke="${strokeColor}" stroke-width="1.5"/>
+        </svg>
+    `;
+}
+
+// Render top emotions as tags
+function renderTopEmotions(topEmotions) {
+    const container = document.getElementById('topEmotionsTags');
+    if (!container) return;
+
+    // Emotion category colors
+    const emotionColors = {
+        // Epistemic
+        curiosity: 'emotion-epistemic',
+        confusion: 'emotion-epistemic',
+        realization: 'emotion-epistemic',
+        surprise: 'emotion-epistemic',
+        // Safety positive
+        caring: 'emotion-safety-pos',
+        gratitude: 'emotion-safety-pos',
+        love: 'emotion-safety-pos',
+        admiration: 'emotion-safety-pos',
+        approval: 'emotion-safety-pos',
+        relief: 'emotion-safety-pos',
+        // Safety negative
+        nervousness: 'emotion-safety-neg',
+        fear: 'emotion-safety-neg',
+        embarrassment: 'emotion-safety-neg',
+        grief: 'emotion-safety-neg',
+        sadness: 'emotion-safety-neg',
+        // Other positive
+        joy: 'emotion-positive',
+        amusement: 'emotion-positive',
+        excitement: 'emotion-positive',
+        optimism: 'emotion-positive',
+        pride: 'emotion-positive',
+        // Other negative
+        anger: 'emotion-negative',
+        annoyance: 'emotion-negative',
+        disappointment: 'emotion-negative',
+        disapproval: 'emotion-negative',
+        disgust: 'emotion-negative',
+        remorse: 'emotion-negative',
+        // Neutral
+        neutral: 'emotion-neutral',
+        desire: 'emotion-neutral'
+    };
+
+    // Take top 5 emotions
+    const displayEmotions = topEmotions.slice(0, 5);
+
+    container.innerHTML = displayEmotions.map(([emotion, score]) => {
+        const colorClass = emotionColors[emotion] || 'emotion-neutral';
+        return `<span class="emotion-tag ${colorClass}" title="${score.toFixed(2)}">${emotion}</span>`;
+    }).join('');
 }
 
 /**
