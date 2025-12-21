@@ -53,24 +53,27 @@ A 4-dimensional phase-space vector representing dialogue state:
 Each component is normalized to [-1, +1]:
 - **ψ_semantic** - Derived from Δκ and α (using Morgoulis metrics)
 - **ψ_temporal** - Response latency dynamics
-- **ψ_affective** - Sentiment trajectory via VADER + hedging/vulnerability patterns
+- **ψ_affective** - Sentiment trajectory via VADER + GoEmotions hybrid (hedging/vulnerability patterns)
 - **ψ_biosignal** - Heart rate variability coherence (via EarthianBioSense)
 
-**Location:** `src/extensions.py:SemanticClimateAnalyzer`
+**Location:** `src/analyzer.py:SemanticClimateAnalyzer`, `src/substrates.py`
 
 ### Attractor Basin Framework
 
-Seven canonical configurations in phase-space:
+Ten canonical configurations in phase-space:
 
-1. Generative Flow
-2. Vigilant Engagement
-3. Contemplative Depth
-4. Creative Tension
-5. Cognitive Mimicry
-6. Semantic Drift
-7. Chaotic Fragmentation
+1. Deep Resonance - All substrates high, genuine mutual engagement
+2. Collaborative Inquiry - Genuine co-exploration with mutual uncertainty
+3. Cognitive Mimicry - Model performs engagement without genuine uncertainty (risk)
+4. Reflexive Performance - Model appears to self-examine but pattern-matches
+5. Sycophantic Convergence - High alignment, low curvature, low affect (risk)
+6. Creative Dilation - Divergent exploration with high affect
+7. Generative Conflict - Productive tension, high affect
+8. Embodied Coherence - Low semantic, high biosignal (body leads)
+9. Dissociation - All substrates low (risk)
+10. Transitional - No clear basin, between states
 
-**Location:** `src/extensions.py:detect_attractor_basin()`
+**Location:** `src/basins.py:BasinDetector`
 
 ### Trajectory Dynamics
 
@@ -81,7 +84,17 @@ Windowed storage and derivative calculation:
 - **Acceleration** (d²Ψ/dt²) - Second derivative
 - **Curvature** - Rate of directional change
 
-**Location:** `src/extensions.py:TrajectoryBuffer`
+**Location:** `src/trajectory.py:TrajectoryBuffer`
+
+### Trajectory Integrity
+
+Path-dependence analysis measuring coherent relationship between trajectory and its history:
+
+- **IntegrityAnalyzer** - Computes autocorrelation, tortuosity, recurrence
+- **TransformationDetector** - Detects constraint-altering events
+- Score interpretation: fragmented (0.0-0.3), living (0.3-0.7), rigid (0.7-1.0)
+
+**Location:** `src/integrity.py`
 
 ### Coupling Mode Classification
 
@@ -105,8 +118,10 @@ Metaphorical interpretation of metrics:
 
 Real-time semantic coupling analysis interface:
 - FastAPI + WebSocket backend
-- Live metric visualization
-- Ollama LLM integration
+- Live metric visualization with trajectory sparklines
+- Multi-provider LLM support (Together AI, Anthropic, OpenAI, Ollama)
+- GoEmotions-based hybrid affective analysis
+- Epistemic/safety trajectory visualization
 - Optional EarthianBioSense biosignal coupling
 
 **Location:** `semantic_climate_app/`
@@ -141,10 +156,10 @@ If you use Vector Ψ, attractor basins, trajectory dynamics, or the web app, cit
 }
 
 @software{semanticclimate2025,
-  author = {Semantic Climate Phase Space Project},
+  author = {Mytka, Mathew},
   title = {Semantic Climate Phase Space},
   year = {2025},
-  url = {https://github.com/EarthianLab/semantic-climate-phase-space}
+  url = {https://github.com/m3data/semantic-climate-phase-space}
 }
 ```
 
@@ -176,15 +191,16 @@ Morgoulis (2025) - 4D Semantic Coupling Framework [MIT License]
         │
 This Project - Semantic Climate Phase Space [ESL-A License]
 ├── src/core_metrics.py (Morgoulis, MIT, minimal changes)
-├── src/extensions.py (NEW, ESL-A)
-│   ├── Vector Ψ representation
-│   ├── TrajectoryBuffer
-│   ├── SemanticClimateAnalyzer
-│   └── Attractor basin detection
-├── src/api.py (NEW, ESL-A)
-│   └── Function-based testing API
+├── src/analyzer.py (NEW, ESL-A) - Main orchestrator
+├── src/trajectory.py (NEW, ESL-A) - TrajectoryBuffer, geometry
+├── src/substrates.py (NEW, ESL-A) - Ψ substrate computations
+├── src/basins.py (NEW, ESL-A) - Basin detection, hysteresis
+├── src/integrity.py (NEW, ESL-A) - Trajectory integrity
+├── src/api.py (NEW, ESL-A) - Function-based testing API
+├── src/extensions.py (DEPRECATED) - Legacy monolith
 ├── semantic_climate_app/ (NEW, ESL-A)
-│   └── Real-time web application
+│   ├── backend/ - FastAPI + EmotionService (GoEmotions)
+│   └── frontend/ - Trajectory viz, sparklines
 └── tests/ (NEW, ESL-A)
-    └── 60 validation tests
+    └── 251 validation tests
 ```

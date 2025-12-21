@@ -111,7 +111,8 @@ pip install -r semantic_climate_app/requirements.txt
 **Core library** (`requirements.txt`):
 - Lightweight install (~50MB)
 - Dependencies: numpy, scipy, scikit-learn, pandas
-- Optional: vaderSentiment for affective substrate
+- Optional: vaderSentiment for basic affective substrate
+- Optional: transformers for GoEmotions hybrid affective analysis
 
 **Web application** (`semantic_climate_app/requirements.txt`):
 - PyTorch dependency (~2GB download on first install)
@@ -241,9 +242,13 @@ ollama pull llama3.2
 - Multi-provider LLM support with automatic detection
 - Live metric gauges (Temperature/Humidity/Pressure metaphor)
 - Trajectory-aware coupling mode detection
-- Vector Ψ visualization
+- Vector Ψ visualization with trajectory sparklines
+- Hybrid affective analysis (VADER + GoEmotions)
+- Epistemic/safety trajectory visualization with top emotions
+- Trajectory integrity scoring (fragmented → living → rigid)
 - Session export to JSON
 - Optional EarthianBioSense biosignal integration
+- Debug timing mode for performance profiling
 
 ## Coupling Modes
 
@@ -286,12 +291,17 @@ Ten canonical configurations in phase-space:
 semantic-climate-phase-space/
 ├── src/
 │   ├── core_metrics.py     # Morgoulis (2025) - preserved with attribution
-│   ├── extensions.py       # Vector Ψ, attractors, trajectory dynamics
-│   └── api.py              # Function-based API for testing
-├── tests/                  # 244 tests
+│   ├── analyzer.py         # SemanticClimateAnalyzer - main orchestrator
+│   ├── trajectory.py       # TrajectoryBuffer, geometry computations
+│   ├── substrates.py       # Ψ substrate functions (semantic, temporal, affective, biosignal)
+│   ├── basins.py           # BasinDetector, BasinHistory, hysteresis-aware detection
+│   ├── integrity.py        # IntegrityAnalyzer, TransformationDetector
+│   ├── api.py              # Function-based API for testing
+│   └── extensions.py       # Legacy monolith (deprecated, use analyzer.py)
+├── tests/                  # 251 tests
 ├── semantic_climate_app/   # Real-time web application
-│   ├── backend/            # FastAPI + WebSocket
-│   └── frontend/           # Vanilla HTML/CSS/JS
+│   ├── backend/            # FastAPI + WebSocket + EmotionService
+│   └── frontend/           # Vanilla HTML/CSS/JS with trajectory viz
 └── docs/                   # Additional documentation
 ```
 
@@ -301,7 +311,7 @@ semantic-climate-phase-space/
 # Run all tests
 pytest tests/ -v
 
-# Expected: 244 passed
+# Expected: 251 passed
 ```
 
 ## Attribution
