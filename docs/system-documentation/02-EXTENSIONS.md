@@ -82,7 +82,7 @@ psi_temporal = 1 / (1 + cv)
 
 #### 3. Affective Substrate (Ψ_aff)
 
-**Source:** Sentiment analysis + epistemic markers
+**Source:** Sentiment analysis + epistemic markers (VADER baseline or GoEmotions hybrid)
 
 **Components:**
 - **Sentiment trajectory:** VADER compound scores per turn
@@ -90,9 +90,14 @@ psi_temporal = 1 / (1 + cv)
 - **Vulnerability score:** Self-disclosure / uncertainty expressions
 - **Confidence variance:** Variability in assertiveness
 
-Note that VADER is used as a baseline and is a current known weakness in the model; custom models may improve affective sensitivity.
+**Hybrid Mode (v2.0.0+):** When EmotionService is provided, the affective substrate is enhanced with GoEmotions transformer-based analysis:
 
-**Computation:**
+- **Epistemic trajectory:** Per-turn max of curiosity, confusion, realization, surprise
+- **Safety trajectory:** Net safety score (positive emotions - negative emotions)
+- **Top emotions:** Ranked emotion tags with semantic category labels
+- **28 emotion categories:** Full granular emotion detection
+
+**Computation (VADER baseline):**
 ```python
 sentiment_mean = mean(vader_scores)
 hedging = count(hedging_markers) / word_count
@@ -101,8 +106,31 @@ vulnerability = count(vulnerability_markers) / turn_count
 psi_affective = weighted_combine(sentiment_mean, hedging, vulnerability)
 ```
 
+**Computation (Hybrid mode):**
+```python
+# VADER provides sentiment baseline
+sentiment_mean = mean(vader_scores)
+
+# GoEmotions provides granular emotions
+epistemic = max(curiosity, confusion, realization, surprise)
+safety = sum(safety_positive) - sum(safety_negative)
+
+# Combined with hedging and vulnerability
+psi_affective = weighted_combine(sentiment_mean, hedging, vulnerability, epistemic_weight=0.1)
+```
+
 **Range:** [-1, 1]
 **Interpretation:** High = emotional engagement; Low = neutral/flat affect
+
+**Usage:**
+```python
+# VADER-only (fast, no model loading)
+analyzer = SemanticClimateAnalyzer()
+
+# Hybrid mode (requires transformers)
+from semantic_climate_app.backend.emotion_service import EmotionService
+analyzer = SemanticClimateAnalyzer(emotion_service=EmotionService())
+```
 
 #### 4. Biosignal Substrate (Ψ_bio)
 

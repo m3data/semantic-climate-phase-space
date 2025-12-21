@@ -135,7 +135,14 @@ embeddings = service.embed_batch(["Turn 1", "Turn 2", "Turn 3"])
 ```python
 from metrics_service import MetricsService
 
+# Default: GoEmotions enabled for rich emotion analysis
 service = MetricsService()
+
+# Options:
+service = MetricsService(
+    enable_goemotions=True,   # Load GoEmotions model (default: True)
+    debug_timing=False        # Print timing info for performance profiling
+)
 
 result = service.analyze(
     embeddings=embedding_list,
@@ -183,7 +190,18 @@ result = service.analyze(
         'name': str,
         'confidence': float
     },
-    'affective_substrate': {...}
+    'affective_substrate': {
+        'psi_affective': float,
+        'sentiment_trajectory': [float],
+        'hedging_density': float,
+        'vulnerability_score': float,
+        'confidence_variance': float,
+        'source': 'vader' | 'hybrid',
+        # Hybrid mode only (when enable_goemotions=True):
+        'epistemic_trajectory': [float],
+        'safety_trajectory': [float],
+        'top_emotions': [{'emotion': str, 'score': float, 'category': str}]
+    }
 }
 ```
 

@@ -296,22 +296,47 @@ def compute_temporal_substrate(
 
 ```python
 def compute_affective_substrate(
-    self,
     turn_texts: list[str],
-    embeddings: np.ndarray = None
+    embeddings: np.ndarray = None,
+    emotion_service: EmotionService = None  # Optional: enables GoEmotions hybrid
 ) -> dict
 ```
 
-**Returns:**
+**Returns (VADER-only mode, emotion_service=None):**
 ```python
 {
     'psi_affective': float,
     'sentiment_trajectory': list[float],
     'hedging_density': float,
     'vulnerability_score': float,
-    'confidence_variance': float
+    'confidence_variance': float,
+    'source': 'vader'
 }
 ```
+
+**Returns (Hybrid mode, emotion_service provided):**
+```python
+{
+    'psi_affective': float,
+    'sentiment_trajectory': list[float],
+    'hedging_density': float,
+    'vulnerability_score': float,
+    'confidence_variance': float,
+    'source': 'hybrid',
+    # GoEmotions-specific fields:
+    'epistemic_trajectory': list[float],  # Per-turn max of curiosity/confusion/realization/surprise
+    'safety_trajectory': list[float],     # Per-turn net safety (positive - negative)
+    'top_emotions': list[dict],           # [{'emotion': str, 'score': float, 'category': str}, ...]
+    'emotion_scores': dict                # Full 28-category scores
+}
+```
+
+**Emotion Categories:**
+- `epistemic`: curiosity, confusion, realization, surprise
+- `safety_positive`: caring, gratitude, love, admiration, approval, relief
+- `safety_negative`: nervousness, fear, embarrassment, grief, sadness
+- `valence_positive`: joy, excitement, amusement, optimism, pride
+- `valence_negative`: anger, annoyance, disappointment, disapproval, disgust, remorse
 
 ---
 

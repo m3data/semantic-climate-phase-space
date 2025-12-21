@@ -18,10 +18,10 @@ Each module that affects analysis output has its own semantic version:
 | Module | Current | Description |
 |--------|---------|-------------|
 | `core_metrics` | 1.1.0 | Morgoulis metrics (Δκ, α, ΔH) |
-| `extensions` | 1.1.0 | Ψ vector, trajectory dynamics |
-| `basin_detection` | 2.0.0 | Attractor basin classification |
+| `extensions` | 1.2.0 | Ψ vector, trajectory dynamics, integrity |
+| `basin_detection` | 2.1.0 | 10 attractor basins with hysteresis |
 | `export_schema` | 2.0.0 | Session export format |
-| `affective` | 1.0.0 | VADER sentiment analysis |
+| `affective` | 2.0.0 | VADER + GoEmotions hybrid |
 | `biosignal` | 1.0.0 | EBS integration |
 
 ## Version History
@@ -37,6 +37,12 @@ Each module that affects analysis output has its own semantic version:
 
 ### Extensions (`extensions`)
 
+**1.2.0 (2025-12-21)** — Modular architecture + integrity
+- Refactored into modular components (analyzer.py, trajectory.py, substrates.py, basins.py, integrity.py)
+- Added trajectory integrity scoring (fragmented/living/rigid)
+- Added debug_timing flag for performance profiling
+- GoEmotions hybrid affective integration
+
 **1.1.0 (2025-12-11)** — Basin detection v2 integration
 - 9 canonical basins with dialogue context
 - Trajectory metrics inform classification
@@ -49,12 +55,34 @@ Each module that affects analysis output has its own semantic version:
 
 ### Basin Detection (`basin_detection`)
 
+**2.1.0 (2025-12-21)** — 10 basins with hysteresis
+- Expanded to 10 canonical configurations
+- Added BasinHistory for hysteresis-aware detection
+- Soft membership computation with temporal smoothing
+- Movement-preserving classification
+
 **2.0.0 (2025-12-11)** — Refined v2 with dialogue context
 - Added trajectory metrics (velocity, acceleration, curvature)
 - Added coherence pattern detection
 - Expanded to 9 basins with nuanced thresholds
 
 **1.0.0 (2025-12-06)** — Initial basin detection (7 basins)
+
+### Affective (`affective`)
+
+**2.0.0 (2025-12-21)** — GoEmotions hybrid
+- Added GoEmotions transformer model (roberta-base-go_emotions)
+- 28 emotion categories with semantic groupings
+- Epistemic trajectory (curiosity, confusion, realization, surprise)
+- Safety trajectory (caring, fear, nervousness, etc.)
+- Top emotions per turn with category tagging
+- VADER fallback for fast path (emotion_service=None)
+- Source field indicates mode ('vader', 'hybrid', 'none')
+
+**1.0.0 (2025-12-06)** — Initial VADER sentiment
+- VADER compound scores per turn
+- Hedging density detection
+- Vulnerability scoring
 
 ### Export Schema (`export_schema`)
 
@@ -78,10 +106,10 @@ Session exports now include:
     "schema_version": "2.0.0",
     "versions": {
       "core_metrics": "1.1.0",
-      "extensions": "1.1.0",
-      "basin_detection": "2.0.0",
+      "extensions": "1.2.0",
+      "basin_detection": "2.1.0",
       "export_schema": "2.0.0",
-      "affective": "1.0.0",
+      "affective": "2.0.0",
       "biosignal": "1.0.0"
     },
     // ... other metadata
