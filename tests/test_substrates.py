@@ -23,8 +23,10 @@ try:
         compute_semantic_substrate,
         compute_temporal_substrate,
         compute_affective_substrate,
+        compute_affective_substrate_fast,
         compute_biosignal_substrate,
-        compute_dialogue_context
+        compute_dialogue_context,
+        merge_affective_results
     )
     SUBSTRATES_MODULE_EXISTS = True
 except ImportError:
@@ -34,8 +36,10 @@ except ImportError:
     compute_semantic_substrate = _analyzer.compute_semantic_substrate
     compute_temporal_substrate = _analyzer.compute_temporal_substrate
     compute_affective_substrate = _analyzer.compute_affective_substrate
+    compute_affective_substrate_fast = _analyzer.compute_affective_substrate  # Fallback
     compute_biosignal_substrate = _analyzer._compute_biosignal_substrate
     compute_dialogue_context = _analyzer.compute_dialogue_context
+    merge_affective_results = None
 
 
 # Load golden outputs for regression testing
@@ -228,6 +232,166 @@ class TestAffectiveSubstrate:
         # Note: Can't reproduce exact values without original texts
         # Verify the golden has expected structure
         assert golden_affective['hedging_density'] > 0
+
+
+class TestAffectiveSubstrateFast:
+    """Tests for compute_affective_substrate_fast (VADER-only path)."""
+
+    def test_returns_source_vader(self):
+        """Fast path should indicate source as 'vader'."""
+        texts = ["This is a test.", "Another test here."]
+
+        result = compute_affective_substrate_fast(turn_texts=texts)
+
+        assert result.get('source') == 'vader'
+
+    def test_matches_original_behavior(self):
+        """Fast path should match original compute_affective_substrate behavior."""
+        texts = [
+            "I think this might work.",
+            "Perhaps we should consider alternatives.",
+            "I'm feeling uncertain about this approach.",
+        ]
+
+        fast_result = compute_affective_substrate_fast(turn_texts=texts)
+
+        # Should have all original keys
+        assert 'psi_affective' in fast_result
+        assert 'sentiment_trajectory' in fast_result
+        assert 'hedging_density' in fast_result
+        assert 'vulnerability_score' in fast_result
+        assert 'confidence_variance' in fast_result
+
+    def test_performance_no_transformer_overhead(self):
+        """Fast path should be quick (no transformer loading)."""
+        import time
+
+        texts = ["Quick test."] * 10
+
+        start = time.time()
+        for _ in range(100):
+            compute_affective_substrate_fast(turn_texts=texts)
+        elapsed = time.time() - start
+
+        # Should complete 100 iterations in under 1 second
+        assert elapsed < 1.0
+
+
+class TestAffectiveSubstrateHybrid:
+    """Tests for hybrid compute_affective_substrate with emotion service."""
+
+    def test_without_emotion_service_returns_fast_path(self):
+        """Without emotion_service, should return fast path result."""
+        texts = ["I think this is interesting.", "Maybe we should explore."]
+
+        result = compute_affective_substrate(turn_texts=texts)
+
+        # Should be vader source when no emotion service
+        assert result.get('source') == 'vader'
+
+    def test_without_emotion_service_backward_compatible(self):
+        """Should be backward compatible with original API."""
+        texts = ["Happy thoughts!", "Sad times.", "Neutral expression."]
+
+        result = compute_affective_substrate(turn_texts=texts)
+
+        # All original fields should be present
+        assert 'psi_affective' in result
+        assert 'sentiment_trajectory' in result
+        assert len(result['sentiment_trajectory']) == 3
+
+    @pytest.mark.skipif(not SUBSTRATES_MODULE_EXISTS, reason="Requires substrates module")
+    def test_merge_affective_results_structure(self):
+        """merge_affective_results should produce expected structure."""
+        if merge_affective_results is None:
+            pytest.skip("merge_affective_results not available")
+
+        # Mock fast result
+        fast_result = {
+            'psi_affective': -0.2,
+            'sentiment_trajectory': [0.5, -0.3, 0.1],
+            'hedging_density': 0.05,
+            'vulnerability_score': 0.02,
+            'confidence_variance': 0.001,
+            'source': 'vader'
+        }
+
+        # Mock EmotionResult-like objects
+        class MockEmotionResult:
+            def __init__(self, scores, epistemic, safety):
+                self.scores = scores
+                self.epistemic_score = epistemic
+                self.safety_score = safety
+
+        emotion_results = [
+            MockEmotionResult(
+                scores={'curiosity': 0.7, 'confusion': 0.2, 'neutral': 0.1},
+                epistemic=0.6,
+                safety=0.3
+            ),
+            MockEmotionResult(
+                scores={'curiosity': 0.4, 'realization': 0.5, 'neutral': 0.1},
+                epistemic=0.8,
+                safety=0.4
+            ),
+        ]
+
+        merged = merge_affective_results(fast_result, emotion_results, ["text1", "text2"])
+
+        # Check hybrid source
+        assert merged['source'] == 'hybrid'
+
+        # Check new fields
+        assert 'emotion_profiles' in merged
+        assert 'epistemic_trajectory' in merged
+        assert 'safety_trajectory' in merged
+        assert 'top_emotions' in merged
+        assert 'epistemic_mean' in merged
+        assert 'safety_mean' in merged
+
+        # Check preserved fast-path fields
+        assert merged['hedging_density'] == 0.05
+        assert merged['vulnerability_score'] == 0.02
+
+    @pytest.mark.skipif(not SUBSTRATES_MODULE_EXISTS, reason="Requires substrates module")
+    def test_merge_epistemic_trajectory_extraction(self):
+        """Should extract epistemic emotions into trajectory."""
+        if merge_affective_results is None:
+            pytest.skip("merge_affective_results not available")
+
+        fast_result = {
+            'psi_affective': 0.0,
+            'sentiment_trajectory': [],
+            'hedging_density': 0.0,
+            'vulnerability_score': 0.0,
+            'confidence_variance': 0.0,
+            'source': 'vader'
+        }
+
+        class MockEmotionResult:
+            def __init__(self, scores, epistemic, safety):
+                self.scores = scores
+                self.epistemic_score = epistemic
+                self.safety_score = safety
+
+        emotion_results = [
+            MockEmotionResult(
+                scores={'curiosity': 0.8, 'confusion': 0.1, 'realization': 0.0, 'surprise': 0.2},
+                epistemic=0.7, safety=0.5
+            ),
+            MockEmotionResult(
+                scores={'curiosity': 0.3, 'confusion': 0.5, 'realization': 0.6, 'surprise': 0.1},
+                epistemic=0.4, safety=0.3
+            ),
+        ]
+
+        merged = merge_affective_results(fast_result, emotion_results, ["t1", "t2"])
+
+        # Check epistemic trajectory
+        assert merged['epistemic_trajectory']['curiosity'] == [0.8, 0.3]
+        assert merged['epistemic_trajectory']['confusion'] == [0.1, 0.5]
+        assert merged['epistemic_trajectory']['realization'] == [0.0, 0.6]
+        assert merged['epistemic_trajectory']['surprise'] == [0.2, 0.1]
 
 
 class TestBiosignalSubstrate:

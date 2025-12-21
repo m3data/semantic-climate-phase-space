@@ -12,6 +12,8 @@ the movement of meaning in human-AI dialogue, distinguishing between
 progressive and regressive dynamics.
 
 This module wraps the clean src/ implementation for web app use.
+
+Updated 2025-12-21: Added GoEmotions-based emotion analysis via EmotionService.
 """
 
 from dataclasses import dataclass
@@ -24,6 +26,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from src import SemanticClimateAnalyzer
 import numpy as np
+
+# Import EmotionService - handle both package and direct execution contexts
+try:
+    from .emotion_service import EmotionService
+except ImportError:
+    from emotion_service import EmotionService
 
 
 @dataclass
@@ -64,8 +72,24 @@ class CouplingMode:
 class MetricsService:
     """Wrapper around SemanticClimateAnalyzer for web app."""
 
-    def __init__(self):
-        self.analyzer = SemanticClimateAnalyzer()
+    def __init__(self, enable_goemotions: bool = True):
+        """
+        Initialize metrics service.
+
+        Args:
+            enable_goemotions: If True, loads GoEmotions model for rich
+                emotion analysis. Model loads lazily on first use.
+                Set False for faster startup / lower memory.
+        """
+        # Initialize emotion service (lazy load to avoid slow startup)
+        if enable_goemotions:
+            self.emotion_service = EmotionService(lazy_load=True)
+        else:
+            self.emotion_service = None
+
+        self.analyzer = SemanticClimateAnalyzer(
+            emotion_service=self.emotion_service
+        )
 
     def analyze(
         self,
@@ -198,8 +222,16 @@ class MetricsService:
                     'hedging_density': float(aff['hedging_density']),
                     'vulnerability_score': float(aff['vulnerability_score']),
                     'confidence_variance': float(aff['confidence_variance']),
-                    'sentiment_trajectory_length': len(aff['sentiment_trajectory'])
+                    'sentiment_trajectory_length': len(aff['sentiment_trajectory']),
+                    'source': aff.get('source', 'vader')
                 }
+                # Include GoEmotions data if available (hybrid mode)
+                if aff.get('source') == 'hybrid':
+                    affective_substrate['epistemic_trajectory'] = aff.get('epistemic_trajectory')
+                    affective_substrate['safety_trajectory'] = aff.get('safety_trajectory')
+                    affective_substrate['top_emotions'] = aff.get('top_emotions')
+                    affective_substrate['epistemic_mean'] = aff.get('epistemic_mean')
+                    affective_substrate['safety_mean'] = aff.get('safety_mean')
 
             psi_composite = float(psi_result['psi'])
 

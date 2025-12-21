@@ -32,7 +32,7 @@ Usage:
     print(f"Residence time: {result['attractor_dynamics']['residence_time']}")
 """
 
-from typing import Optional, List
+from typing import Optional, List, TYPE_CHECKING
 import numpy as np
 
 from .core_metrics import SemanticComplexityAnalyzer
@@ -44,6 +44,10 @@ from .substrates import (
     compute_biosignal_substrate,
     compute_dialogue_context,
 )
+
+# Type hint for optional EmotionService without importing
+if TYPE_CHECKING:
+    pass  # EmotionService imported dynamically to avoid circular deps
 from .basins import (
     BasinDetector,
     BasinHistory,
@@ -82,7 +86,8 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
         random_state: int = 42,
         bootstrap_iterations: int = 1000,
         track_history: bool = True,
-        compute_integrity: bool = True
+        compute_integrity: bool = True,
+        emotion_service=None
     ):
         """
         Initialize the extended analyzer.
@@ -92,11 +97,14 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
             bootstrap_iterations: Number of bootstrap samples for CI
             track_history: Whether to maintain trajectory and basin history
             compute_integrity: Whether to compute trajectory integrity
+            emotion_service: Optional EmotionService for GoEmotions-based
+                affective analysis. If None, uses VADER-only fast path.
         """
         super().__init__(random_state=random_state, bootstrap_iterations=bootstrap_iterations)
 
         self.track_history = track_history
         self.compute_integrity = compute_integrity
+        self.emotion_service = emotion_service
 
         # Initialize components based on flags
         if track_history:
@@ -194,10 +202,12 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
         )
 
         # Affective substrate (from turn texts if available)
+        # Uses hybrid VADER + GoEmotions if emotion_service is configured
         if turn_texts is not None and len(turn_texts) > 0:
             affective_result = compute_affective_substrate(
                 turn_texts=turn_texts,
-                embeddings=dialogue_embeddings
+                embeddings=dialogue_embeddings,
+                emotion_service=self.emotion_service
             )
         else:
             affective_result = {
@@ -205,7 +215,8 @@ class SemanticClimateAnalyzer(SemanticComplexityAnalyzer):
                 'sentiment_trajectory': [],
                 'hedging_density': 0.0,
                 'vulnerability_score': 0.0,
-                'confidence_variance': 0.0
+                'confidence_variance': 0.0,
+                'source': 'none'
             }
 
         # Biosignal substrate

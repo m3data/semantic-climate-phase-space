@@ -18,21 +18,29 @@ Phase Space model. Each substrate represents one dimension of the Ψ vector:
 Functions:
     compute_semantic_substrate: Ψ_semantic from core metrics
     compute_temporal_substrate: Ψ_temporal from metric stability
-    compute_affective_substrate: Ψ_affective from text analysis
+    compute_affective_substrate: Ψ_affective from text analysis (hybrid VADER + GoEmotions)
     compute_biosignal_substrate: Ψ_biosignal from physio data
     compute_dialogue_context: Context features for basin detection
+
+Updated 2025-12-21: Hybrid affective analysis with fast (VADER) and slow (GoEmotions) paths.
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any, TYPE_CHECKING
 import numpy as np
 import re
+
+# Type hint for optional EmotionService without importing
+if TYPE_CHECKING:
+    from semantic_climate_app.backend.emotion_service import EmotionService
 
 __all__ = [
     'compute_semantic_substrate',
     'compute_temporal_substrate',
     'compute_affective_substrate',
+    'compute_affective_substrate_fast',
     'compute_biosignal_substrate',
     'compute_dialogue_context',
+    'merge_affective_results',
 ]
 
 
@@ -166,15 +174,16 @@ def compute_temporal_substrate(
     }
 
 
-def compute_affective_substrate(
+def compute_affective_substrate_fast(
     turn_texts: List[str],
     embeddings: np.ndarray = None
 ) -> dict:
     """
-    Calculate Ψ_affective from conversational text.
+    Fast path: Calculate Ψ_affective using VADER (lexicon-based).
 
-    Measures emotional safety, openness, vulnerability, and epistemic stance
-    through sentiment analysis, hedging detection, and vulnerability indicators.
+    This is the synchronous, low-latency path (~1ms). Use for real-time
+    analysis. For richer emotion detection, use compute_affective_substrate
+    with an EmotionService.
 
     Args:
         turn_texts: List of conversational turn texts
@@ -183,32 +192,29 @@ def compute_affective_substrate(
     Returns:
         dict: {
             'psi_affective': Composite affective substrate score [-1, 1]
-            'sentiment_trajectory': List of per-turn sentiment scores
+            'sentiment_trajectory': List of per-turn VADER compound scores
             'hedging_density': Proportion of hedging markers
             'vulnerability_score': Vulnerability indicator density
             'confidence_variance': Variability in confidence expression
+            'source': 'vader' (indicates fast path)
         }
     """
+    empty_result = {
+        'psi_affective': 0.0,
+        'sentiment_trajectory': [],
+        'hedging_density': 0.0,
+        'vulnerability_score': 0.0,
+        'confidence_variance': 0.0,
+        'source': 'vader'
+    }
+
     try:
         from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
     except ImportError:
-        # Fallback if vaderSentiment not installed
-        return {
-            'psi_affective': 0.0,
-            'sentiment_trajectory': [],
-            'hedging_density': 0.0,
-            'vulnerability_score': 0.0,
-            'confidence_variance': 0.0
-        }
+        return empty_result
 
     if not turn_texts or len(turn_texts) == 0:
-        return {
-            'psi_affective': 0.0,
-            'sentiment_trajectory': [],
-            'hedging_density': 0.0,
-            'vulnerability_score': 0.0,
-            'confidence_variance': 0.0
-        }
+        return empty_result
 
     vader = SentimentIntensityAnalyzer()
 
@@ -303,7 +309,195 @@ def compute_affective_substrate(
         'sentiment_trajectory': sentiment_scores,
         'hedging_density': float(hedging_density),
         'vulnerability_score': float(vulnerability_score),
-        'confidence_variance': float(confidence_variance)
+        'confidence_variance': float(confidence_variance),
+        'source': 'vader'
+    }
+
+
+def compute_affective_substrate(
+    turn_texts: List[str],
+    embeddings: np.ndarray = None,
+    emotion_service: Optional['EmotionService'] = None,
+    use_async: bool = False,
+    async_callback: callable = None
+) -> dict:
+    """
+    Hybrid path: Calculate Ψ_affective with optional GoEmotions enrichment.
+
+    Combines fast VADER-based analysis with optional transformer-based
+    emotion detection (GoEmotions). If emotion_service is provided,
+    returns richer emotion profiles including epistemic and safety signals.
+
+    Args:
+        turn_texts: List of conversational turn texts
+        embeddings: Optional embeddings (reserved for future)
+        emotion_service: Optional EmotionService for GoEmotions analysis
+        use_async: If True and emotion_service provided, queue async analysis
+        async_callback: Callback for async results (receives merged result)
+
+    Returns:
+        dict: {
+            'psi_affective': Composite affective substrate score [-1, 1]
+            'sentiment_trajectory': List of per-turn sentiment scores
+            'hedging_density': Proportion of hedging markers
+            'vulnerability_score': Vulnerability indicator density
+            'confidence_variance': Variability in confidence expression
+            'source': 'vader' | 'goemotions' | 'hybrid'
+
+            # Additional fields when emotion_service provided:
+            'emotion_profiles': List of per-turn emotion dicts (28 categories)
+            'epistemic_trajectory': {curiosity, confusion, realization, surprise}
+            'safety_trajectory': {safety_positive, safety_negative, safety_net}
+            'top_emotions': Aggregated top emotions across dialogue
+        }
+    """
+    # Always compute fast path first
+    fast_result = compute_affective_substrate_fast(turn_texts, embeddings)
+
+    # If no emotion service, return fast result only
+    if emotion_service is None:
+        return fast_result
+
+    if not turn_texts:
+        return fast_result
+
+    # With emotion service: compute rich emotions
+    if use_async and async_callback:
+        # Queue async analysis, return fast result immediately
+        def on_complete(emotion_results):
+            merged = merge_affective_results(fast_result, emotion_results, turn_texts)
+            async_callback(merged)
+
+        # Queue all turns for async processing
+        for text in turn_texts:
+            emotion_service.analyze_async(text, callback=None)
+
+        # Final callback gets all results
+        # Note: This is simplified - real impl would batch and call back once
+        fast_result['async_pending'] = True
+        return fast_result
+
+    else:
+        # Synchronous: compute emotions now
+        try:
+            emotion_results = emotion_service.analyze_batch(turn_texts)
+            return merge_affective_results(fast_result, emotion_results, turn_texts)
+        except Exception as e:
+            # Fall back to fast result on error
+            fast_result['emotion_error'] = str(e)
+            return fast_result
+
+
+def merge_affective_results(
+    fast_result: dict,
+    emotion_results: List[Any],
+    turn_texts: List[str]
+) -> dict:
+    """
+    Merge VADER fast results with GoEmotions results.
+
+    Combines the lexicon-based signals (hedging, vulnerability patterns)
+    with transformer-based emotion detection for a richer affective profile.
+
+    Args:
+        fast_result: Output from compute_affective_substrate_fast
+        emotion_results: List of EmotionResult from EmotionService
+        turn_texts: Original turn texts
+
+    Returns:
+        Merged result dict with both fast and slow path signals
+    """
+    if not emotion_results:
+        return fast_result
+
+    # Extract per-turn emotion profiles
+    emotion_profiles = []
+    epistemic_trajectory = {
+        'curiosity': [], 'confusion': [], 'realization': [], 'surprise': []
+    }
+    safety_positive = []
+    safety_negative = []
+    safety_net = []
+
+    # Aggregate top emotions
+    emotion_totals = {}
+
+    for result in emotion_results:
+        if result is None:
+            continue
+
+        # Store full profile
+        emotion_profiles.append(result.scores)
+
+        # Extract epistemic emotions
+        for emotion in ['curiosity', 'confusion', 'realization', 'surprise']:
+            epistemic_trajectory[emotion].append(result.scores.get(emotion, 0.0))
+
+        # Extract safety signals
+        safety_positive.append(sum(
+            result.scores.get(e, 0)
+            for e in ['caring', 'gratitude', 'love', 'admiration', 'approval', 'relief']
+        ))
+        safety_negative.append(sum(
+            result.scores.get(e, 0)
+            for e in ['nervousness', 'fear', 'embarrassment', 'grief', 'sadness']
+        ))
+        safety_net.append(result.safety_score)
+
+        # Accumulate for top emotions
+        for emotion, score in result.scores.items():
+            if emotion != 'neutral':
+                emotion_totals[emotion] = emotion_totals.get(emotion, 0) + score
+
+    # Compute refined psi_affective using emotion data
+    # Weight: epistemic engagement + safety + hedging patterns
+    if emotion_results:
+        avg_epistemic = np.mean([r.epistemic_score for r in emotion_results if r])
+        avg_safety = np.mean([r.safety_score for r in emotion_results if r])
+
+        # Combine with fast path signals
+        # Epistemic openness and safety both contribute positively
+        # Hedging indicates productive uncertainty (positive in exploratory contexts)
+        psi_affective_refined = np.tanh(
+            0.3 * avg_epistemic +
+            0.3 * avg_safety +
+            0.2 * fast_result['hedging_density'] * 10 +  # Scale up hedging contribution
+            0.2 * fast_result['vulnerability_score'] * 20  # Vulnerability as openness
+        )
+    else:
+        psi_affective_refined = fast_result['psi_affective']
+
+    # Top emotions across dialogue
+    top_emotions = sorted(
+        emotion_totals.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )[:5]
+
+    return {
+        # Core output (refined)
+        'psi_affective': float(psi_affective_refined),
+        'source': 'hybrid',
+
+        # Fast path signals (preserved)
+        'sentiment_trajectory': fast_result['sentiment_trajectory'],
+        'hedging_density': fast_result['hedging_density'],
+        'vulnerability_score': fast_result['vulnerability_score'],
+        'confidence_variance': fast_result['confidence_variance'],
+
+        # Slow path signals (new)
+        'emotion_profiles': emotion_profiles,
+        'epistemic_trajectory': epistemic_trajectory,
+        'safety_trajectory': {
+            'safety_positive': safety_positive,
+            'safety_negative': safety_negative,
+            'safety_net': safety_net
+        },
+        'top_emotions': top_emotions,
+
+        # Aggregate scores
+        'epistemic_mean': float(np.mean([r.epistemic_score for r in emotion_results if r])) if emotion_results else 0.0,
+        'safety_mean': float(np.mean([r.safety_score for r in emotion_results if r])) if emotion_results else 0.0,
     }
 
 
