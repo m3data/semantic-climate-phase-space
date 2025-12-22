@@ -83,6 +83,25 @@ header h1 {
 .header-controls {
     display: flex;
     gap: 12px;
+    align-items: center;
+}
+
+/* ECP Session Indicator (when launched from Field Journal) */
+.ecp-session-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--surface-elevated);
+    border: 1px solid var(--accent-cool-dim);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--accent-cool);
+    font-family: var(--font-mono);
+}
+
+.ecp-session-indicator i {
+    font-size: 14px;
 }
 
 /* Buttons */

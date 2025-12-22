@@ -6,11 +6,17 @@ function connectWebSocket(provider, model) {
     // If already connected, just configure the model
     if (window.ws && window.ws.readyState === WebSocket.OPEN) {
         if (model) {
-            window.ws.send(JSON.stringify({
+            const configMsg = {
                 type: 'configure',
                 provider: provider || 'ollama',
                 model: model
-            }));
+            };
+            // Include ECP context if present (for session correlation)
+            if (window.ecpContext) {
+                configMsg.ecp_session_id = window.ecpContext.sessionId;
+                configMsg.ecp_experiment_type = window.ecpContext.experimentType;
+            }
+            window.ws.send(JSON.stringify(configMsg));
         }
         return;
     }
@@ -25,11 +31,17 @@ function connectWebSocket(provider, model) {
 
         // Only configure if model is provided (not on initial page load)
         if (model) {
-            window.ws.send(JSON.stringify({
+            const configMsg = {
                 type: 'configure',
                 provider: provider || 'ollama',
                 model: model
-            }));
+            };
+            // Include ECP context if present (for session correlation)
+            if (window.ecpContext) {
+                configMsg.ecp_session_id = window.ecpContext.sessionId;
+                configMsg.ecp_experiment_type = window.ecpContext.experimentType;
+            }
+            window.ws.send(JSON.stringify(configMsg));
         }
     };
 

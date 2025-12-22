@@ -12,12 +12,18 @@ let config = {
 // Cache providers data
 let providersCache = null;
 
+// ECP session context (populated from URL params when launched from Field Journal)
+window.ecpContext = null;
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     initializeApp();
 });
 
 function initializeApp() {
+    // Parse ECP context from URL params (when launched from Field Journal)
+    parseECPContext();
+
     // Connect WebSocket immediately (for biosignal streaming before model selection)
     connectWebSocket(null, null);
 
@@ -267,11 +273,11 @@ function exportSession() {
 
 function downloadSessionData(sessionData, savedPath, filename) {
     // Build session complete message
-    // Only show field journal prompt if EBS was connected (e2e experiment)
+    // Show field journal prompt if EBS was connected OR if launched from ECP
     let message = `<i class="ph ph-check-circle"></i> Session exported — <code>${filename || 'sessions/'}</code>`;
 
-    if (window.sessionStarted) {
-        // EBS was connected - this is an e2e experiment
+    if (window.sessionStarted || window.ecpContext) {
+        // EBS was connected or launched from ECP - this is an e2e experiment
         message += `<br><span style="color: var(--text-muted); font-size: 11px;">Return to Field Journal to complete phenomenological capture.</span>`;
     }
 
@@ -282,4 +288,46 @@ function downloadSessionData(sessionData, savedPath, filename) {
     document.getElementById('sendBtn').disabled = true;
     document.getElementById('exportBtn').disabled = true;
 
+}
+
+/**
+ * Parse ECP session context from URL parameters.
+ * Called when Semantic Climate is launched from the ECP Field Journal.
+ */
+function parseECPContext() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('ecp_session_id');
+    const experimentType = urlParams.get('ecp_experiment_type');
+
+    if (sessionId) {
+        window.ecpContext = {
+            sessionId: sessionId,
+            experimentType: experimentType || 'unknown'
+        };
+
+        console.log('ECP context detected:', window.ecpContext);
+        showECPIndicator();
+    }
+}
+
+/**
+ * Show subtle indicator that this session is linked to an ECP experiment.
+ */
+function showECPIndicator() {
+    if (!window.ecpContext) return;
+
+    const indicator = document.createElement('div');
+    indicator.className = 'ecp-session-indicator';
+    indicator.innerHTML = `
+        <i class="ph ph-link"></i>
+        <span title="ECP Session: ${window.ecpContext.sessionId}">
+            ECP: ${window.ecpContext.sessionId.slice(0, 8)}…
+        </span>
+    `;
+
+    // Insert into header controls
+    const headerControls = document.querySelector('.header-controls');
+    if (headerControls) {
+        headerControls.insertBefore(indicator, headerControls.firstChild);
+    }
 }

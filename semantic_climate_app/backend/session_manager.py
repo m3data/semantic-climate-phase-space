@@ -96,6 +96,10 @@ class SessionManager:
         self.latest_biosignal = None
         self.ebs_session_id = None
 
+        # ECP context (when launched from Field Journal)
+        self.ecp_session_id = None
+        self.ecp_experiment_type = None
+
     def add_turn(
         self,
         speaker: str,
@@ -347,6 +351,17 @@ class SessionManager:
         """Set the EBS session ID for coupling."""
         self.ebs_session_id = session_id
 
+    def set_ecp_context(self, session_id: str, experiment_type: str = None):
+        """
+        Set the ECP session context for correlation with Field Journal.
+
+        Args:
+            session_id: The ECP experiment ID from Field Journal
+            experiment_type: The experiment type (e.g., 'human-ai-coupling', 'semantic-only')
+        """
+        self.ecp_session_id = session_id
+        self.ecp_experiment_type = experiment_type
+
     def export_session(self) -> dict:
         """
         Export session data for analysis.
@@ -368,7 +383,10 @@ class SessionManager:
                 "min_turns": self.min_turns,
                 "max_turns": self.max_turns,
                 "ebs_session_id": self.ebs_session_id,
-                "biosignal_samples": len(self.biosignal_stream)
+                "biosignal_samples": len(self.biosignal_stream),
+                # ECP Field Journal correlation
+                "ecp_session_id": self.ecp_session_id,
+                "ecp_experiment_type": self.ecp_experiment_type
             },
             "conversation": [
                 {
@@ -391,3 +409,5 @@ class SessionManager:
         self.biosignal_stream = []
         self.latest_biosignal = None
         self.ebs_session_id = None
+        self.ecp_session_id = None
+        self.ecp_experiment_type = None

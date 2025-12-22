@@ -279,6 +279,13 @@ async def websocket_endpoint(websocket: WebSocket):
                 model_name = message.get("model")
                 provider = message.get("provider", "ollama")  # Default to ollama for backwards compat
 
+                # Handle ECP context if present (when launched from Field Journal)
+                ecp_session_id = message.get("ecp_session_id")
+                ecp_experiment_type = message.get("ecp_experiment_type")
+                if ecp_session_id:
+                    session.set_ecp_context(ecp_session_id, ecp_experiment_type)
+                    print(f"ECP context set: {ecp_session_id} ({ecp_experiment_type})")
+
                 try:
                     llm_client = create_llm_client(provider, model_name)
                     session.set_model(f"{provider}:{model_name}")
