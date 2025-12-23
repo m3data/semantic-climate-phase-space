@@ -172,6 +172,7 @@ class EBSClient:
                     msg_type = data.get("type")
 
                     if msg_type == "phase":
+                        # EBS sends "entrainment" but we map to "coherence" for compatibility
                         phase = PhaseData(
                             ts=data.get("ts"),
                             hr=data.get("hr", 0),
@@ -180,7 +181,7 @@ class EBSClient:
                             velocity_mag=data.get("velocity_mag", 0),
                             curvature=data.get("curvature", 0),
                             stability=data.get("stability", 0),
-                            coherence=data.get("coherence", 0),
+                            coherence=data.get("entrainment", 0),  # Map entrainment → coherence
                             phase_label=data.get("phase_label", "")
                         )
                         self.latest_phase = phase
