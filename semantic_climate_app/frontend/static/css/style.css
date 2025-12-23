@@ -847,7 +847,7 @@ header h1 {
     padding: 24px;
     border-radius: 4px;
     border: 1px solid var(--border-color);
-    max-width: 500px;
+    max-width: 700px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
@@ -889,11 +889,13 @@ header h1 {
 
 .form-group select[size] {
     min-height: 150px;
+    padding: 0;
 }
 
 .form-group select option {
     padding: 8px;
     background-color: var(--surface-color);
+    color: var(--text-color);
 }
 
 /* Provider Selection List */

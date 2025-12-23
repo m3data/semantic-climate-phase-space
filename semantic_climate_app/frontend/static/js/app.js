@@ -147,13 +147,7 @@ async function loadProviders() {
 }
 
 function getProviderIcon(providerName) {
-    const icons = {
-        'ollama': '🦙',
-        'together': '⚡',
-        'anthropic': '🤖',
-        'openai': '🧠'
-    };
-    return icons[providerName] || '💬';
+    return '';
 }
 
 function onProviderSelect(event) {
