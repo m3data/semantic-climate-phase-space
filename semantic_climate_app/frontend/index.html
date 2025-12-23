@@ -292,6 +292,26 @@
                 <!-- Shows helpful info about selected provider -->
             </div>
 
+            <!-- Temperature Control -->
+            <div class="form-group" id="temperatureGroup" style="display: none;">
+                <label for="temperatureSlider">
+                    Temperature: <span id="temperatureValue">0.7</span>
+                </label>
+                <input type="range" id="temperatureSlider" min="0" max="1" step="0.1" value="0.7">
+                <div class="temperature-hints">
+                    <span class="hint-low">0.0 Deterministic</span>
+                    <span class="hint-high">1.0 Creative</span>
+                </div>
+                <p class="form-hint">Lower values = more focused responses. Higher values = more varied/creative responses.</p>
+            </div>
+
+            <!-- System Prompt -->
+            <div class="form-group" id="systemPromptGroup" style="display: none;">
+                <label for="systemPrompt">System Prompt (optional)</label>
+                <textarea id="systemPrompt" rows="3" placeholder="Enter a system prompt to shape the AI's behaviour..."></textarea>
+                <p class="form-hint">Sets context or role for the conversation. Leave empty for default behaviour.</p>
+            </div>
+
             <div id="noProvidersMessage" class="instructions hidden">
                 <p><strong>No providers available.</strong></p>
                 <p>Options:</p>

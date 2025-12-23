@@ -898,6 +898,76 @@ header h1 {
     color: var(--text-color);
 }
 
+/* Temperature Slider */
+.form-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--surface-elevated);
+    border-radius: 3px;
+    outline: none;
+    margin: 8px 0;
+}
+
+.form-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent-warm);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-secondary);
+}
+
+.form-group input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--accent-warm);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-secondary);
+}
+
+.temperature-hints {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Textarea for system prompt */
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: inherit;
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent-warm-dim);
+}
+
+/* Form hints */
+.form-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
 /* Provider Selection List */
 .provider-list {
     display: flex;

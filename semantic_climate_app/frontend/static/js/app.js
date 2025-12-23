@@ -6,6 +6,8 @@
 let config = {
     provider: null,
     model: null,
+    temperature: 0.7,
+    systemPrompt: null,
     minTurns: 10
 };
 
@@ -43,6 +45,13 @@ function initializeApp() {
     document.getElementById('retryProvidersBtn').addEventListener('click', loadProviders);
     document.getElementById('exportBtn').addEventListener('click', exportSession);
     document.getElementById('resetBtn').addEventListener('click', resetSession);
+
+    // Temperature slider
+    document.getElementById('temperatureSlider').addEventListener('input', (e) => {
+        const value = parseFloat(e.target.value);
+        config.temperature = value;
+        document.getElementById('temperatureValue').textContent = value.toFixed(1);
+    });
 
     // Details toggle (delayed revelation pattern)
     document.getElementById('toggleDetailsBtn').addEventListener('click', toggleDetails);
@@ -165,9 +174,13 @@ function populateModels(provider) {
     const modelSelectGroup = document.getElementById('modelSelectGroup');
     const modelSelect = document.getElementById('modelSelect');
     const providerNote = document.getElementById('providerNote');
+    const temperatureGroup = document.getElementById('temperatureGroup');
+    const systemPromptGroup = document.getElementById('systemPromptGroup');
 
     if (provider.models && provider.models.length > 0) {
         modelSelectGroup.style.display = 'block';
+        temperatureGroup.style.display = 'block';
+        systemPromptGroup.style.display = 'block';
 
         // Format model display based on provider
         modelSelect.innerHTML = provider.models.map(model => {
@@ -201,6 +214,8 @@ function populateModels(provider) {
 
     } else {
         modelSelectGroup.style.display = 'none';
+        temperatureGroup.style.display = 'none';
+        systemPromptGroup.style.display = 'none';
         providerNote.style.display = 'none';
         document.getElementById('saveBtn').disabled = true;
     }
@@ -218,13 +233,17 @@ function saveSettings() {
     const select = document.getElementById('modelSelect');
     config.model = select.value;
 
+    // Get system prompt (empty string -> null)
+    const systemPromptInput = document.getElementById('systemPrompt');
+    config.systemPrompt = systemPromptInput.value.trim() || null;
+
     if (!config.provider || !config.model) {
         alert('Please select a provider and model');
         return;
     }
 
-    // Connect WebSocket and configure with provider
-    connectWebSocket(config.provider, config.model);
+    // Connect WebSocket and configure with provider, temperature, and system prompt
+    connectWebSocket(config.provider, config.model, config.temperature, config.systemPrompt);
 
     // Enable chat
     document.getElementById('chatInput').disabled = false;
@@ -233,8 +252,12 @@ function saveSettings() {
     document.getElementById('exportBtn').disabled = false;
     document.getElementById('resetBtn').disabled = false;
 
-    // Update UI
-    addSystemMessage(`Connected to model: ${config.model}`);
+    // Update UI - show config summary
+    let configSummary = `Connected to model: ${config.model} (temp: ${config.temperature})`;
+    if (config.systemPrompt) {
+        configSummary += ` with system prompt`;
+    }
+    addSystemMessage(configSummary);
 
     hideSettings();
 }

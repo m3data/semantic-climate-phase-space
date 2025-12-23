@@ -91,6 +91,11 @@ class SessionManager:
         self.embedding_model = embedding_model
         self.thresholds_version = "v1_narrative_adjusted"
 
+        # LLM configuration (for research record)
+        self.temperature = None
+        self.system_prompt = None
+        self.provider = None
+
         # Biosignal stream from EBS (1Hz phase dynamics)
         self.biosignal_stream = []
         self.latest_biosignal = None
@@ -310,6 +315,21 @@ class SessionManager:
         """Set the LLM model being used."""
         self.model_name = model_name
 
+    def set_llm_config(self, provider: str, model: str, temperature: float = 0.7, system_prompt: str = None):
+        """
+        Set full LLM configuration for research record.
+
+        Args:
+            provider: LLM provider (ollama, together, anthropic, openai)
+            model: Model name/identifier
+            temperature: Sampling temperature (0.0-1.0)
+            system_prompt: System prompt used (if any)
+        """
+        self.provider = provider
+        self.model_name = f"{provider}:{model}"
+        self.temperature = temperature
+        self.system_prompt = system_prompt
+
     def add_biosignal_sample(self, phase_data: dict):
         """
         Store incoming phase dynamics from EBS.
@@ -388,6 +408,13 @@ class SessionManager:
                 "ecp_session_id": self.ecp_session_id,
                 "ecp_experiment_type": self.ecp_experiment_type
             },
+            # LLM configuration (research variables)
+            "llm_config": {
+                "provider": self.provider,
+                "model": self.model_name,
+                "temperature": self.temperature,
+                "system_prompt": self.system_prompt
+            },
             "conversation": [
                 {
                     "turn": idx + 1,
@@ -406,6 +433,9 @@ class SessionManager:
         self.turns.clear()
         self.metrics_history.clear()
         self.model_name = None
+        self.temperature = None
+        self.system_prompt = None
+        self.provider = None
         self.biosignal_stream = []
         self.latest_biosignal = None
         self.ebs_session_id = None

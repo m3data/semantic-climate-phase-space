@@ -278,6 +278,8 @@ async def websocket_endpoint(websocket: WebSocket):
             if msg_type == "configure":
                 model_name = message.get("model")
                 provider = message.get("provider", "ollama")  # Default to ollama for backwards compat
+                temperature = message.get("temperature", 0.7)  # Default 0.7
+                system_prompt = message.get("system_prompt")  # Optional
 
                 # Handle ECP context if present (when launched from Field Journal)
                 ecp_session_id = message.get("ecp_session_id")
@@ -287,14 +289,27 @@ async def websocket_endpoint(websocket: WebSocket):
                     print(f"ECP context set: {ecp_session_id} ({ecp_experiment_type})")
 
                 try:
-                    llm_client = create_llm_client(provider, model_name)
-                    session.set_model(f"{provider}:{model_name}")
+                    llm_client = create_llm_client(
+                        provider,
+                        model_name,
+                        temperature=temperature,
+                        system_prompt=system_prompt
+                    )
+                    # Store full LLM config for research record
+                    session.set_llm_config(
+                        provider=provider,
+                        model=model_name,
+                        temperature=temperature,
+                        system_prompt=system_prompt
+                    )
                     update_session_info(session)  # Update for external clients
                     await websocket.send_text(json.dumps({
                         "type": "config_success",
                         "message": f"Connected to {llm_client.provider_name}: {model_name}",
                         "provider": provider,
-                        "model": model_name
+                        "model": model_name,
+                        "temperature": temperature,
+                        "system_prompt": system_prompt[:100] + "..." if system_prompt and len(system_prompt) > 100 else system_prompt
                     }))
                 except Exception as e:
                     await websocket.send_text(json.dumps({

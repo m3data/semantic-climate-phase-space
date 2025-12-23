@@ -2,14 +2,16 @@
  * WebSocket connection management
  */
 
-function connectWebSocket(provider, model) {
+function connectWebSocket(provider, model, temperature = 0.7, systemPrompt = null) {
     // If already connected, just configure the model
     if (window.ws && window.ws.readyState === WebSocket.OPEN) {
         if (model) {
             const configMsg = {
                 type: 'configure',
                 provider: provider || 'ollama',
-                model: model
+                model: model,
+                temperature: temperature,
+                system_prompt: systemPrompt || null
             };
             // Include ECP context if present (for session correlation)
             if (window.ecpContext) {
@@ -34,7 +36,9 @@ function connectWebSocket(provider, model) {
             const configMsg = {
                 type: 'configure',
                 provider: provider || 'ollama',
-                model: model
+                model: model,
+                temperature: temperature,
+                system_prompt: systemPrompt || null
             };
             // Include ECP context if present (for session correlation)
             if (window.ecpContext) {

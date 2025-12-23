@@ -43,10 +43,22 @@ class LLMClient(ABC):
 class OllamaClient(LLMClient):
     """Client for Ollama local LLM server."""
 
-    def __init__(self, model: str, base_url: str = "http://localhost:11434"):
+    def __init__(
+        self,
+        model: str,
+        base_url: str = "http://localhost:11434",
+        temperature: float = 0.7,
+        system_prompt: Optional[str] = None
+    ):
         self.model = model
         self.base_url = base_url
+        self.temperature = temperature
+        self.system_prompt = system_prompt
         self.history = []
+
+        # Prepend system prompt if provided
+        if system_prompt:
+            self.history.append({"role": "system", "content": system_prompt})
 
     @property
     def provider_name(self) -> str:
@@ -60,7 +72,10 @@ class OllamaClient(LLMClient):
         payload = {
             "model": self.model,
             "messages": self.history,
-            "stream": False
+            "stream": False,
+            "options": {
+                "temperature": self.temperature
+            }
         }
 
         try:
@@ -132,7 +147,13 @@ class TogetherClient(LLMClient):
     Set env var: TOGETHER_API_KEY=your_key_here
     """
 
-    def __init__(self, model: str, api_key: Optional[str] = None):
+    def __init__(
+        self,
+        model: str,
+        api_key: Optional[str] = None,
+        temperature: float = 0.7,
+        system_prompt: Optional[str] = None
+    ):
         self.model = model
         self.api_key = api_key or os.environ.get("TOGETHER_API_KEY")
         if not self.api_key:
@@ -141,7 +162,13 @@ class TogetherClient(LLMClient):
                 "or pass api_key parameter. Get key at https://api.together.xyz/"
             )
         self.base_url = "https://api.together.xyz/v1"
+        self.temperature = temperature
+        self.system_prompt = system_prompt
         self.history = []
+
+        # Prepend system prompt if provided
+        if system_prompt:
+            self.history.append({"role": "system", "content": system_prompt})
 
     @property
     def provider_name(self) -> str:
@@ -159,7 +186,7 @@ class TogetherClient(LLMClient):
         payload = {
             "model": self.model,
             "messages": self.history,
-            "temperature": 0.7,
+            "temperature": self.temperature,
             "max_tokens": 2048
         }
 
@@ -232,7 +259,13 @@ class TogetherClient(LLMClient):
 class AnthropicClient(LLMClient):
     """Client for Anthropic's Claude models."""
 
-    def __init__(self, model: str = "claude-sonnet-4-20250514", api_key: Optional[str] = None):
+    def __init__(
+        self,
+        model: str = "claude-sonnet-4-20250514",
+        api_key: Optional[str] = None,
+        temperature: float = 0.7,
+        system_prompt: Optional[str] = None
+    ):
         try:
             from anthropic import Anthropic
         except ImportError:
@@ -244,6 +277,8 @@ class AnthropicClient(LLMClient):
 
         self.client = Anthropic(api_key=self.api_key)
         self.model = model
+        self.temperature = temperature
+        self.system_prompt = system_prompt
         self.history = []
 
     @property
@@ -253,11 +288,19 @@ class AnthropicClient(LLMClient):
     def chat(self, message: str) -> str:
         self.history.append({"role": "user", "content": message})
 
-        response = self.client.messages.create(
-            model=self.model,
-            max_tokens=2048,
-            messages=self.history
-        )
+        # Build request kwargs
+        request_kwargs = {
+            "model": self.model,
+            "max_tokens": 2048,
+            "messages": self.history,
+            "temperature": self.temperature
+        }
+
+        # Anthropic uses system as a top-level parameter, not in messages
+        if self.system_prompt:
+            request_kwargs["system"] = self.system_prompt
+
+        response = self.client.messages.create(**request_kwargs)
 
         ai_message = response.content[0].text
         self.history.append({"role": "assistant", "content": ai_message})
@@ -275,7 +318,13 @@ class AnthropicClient(LLMClient):
 class OpenAIClient(LLMClient):
     """Client for OpenAI models (GPT-4, etc.)."""
 
-    def __init__(self, model: str = "gpt-4", api_key: Optional[str] = None):
+    def __init__(
+        self,
+        model: str = "gpt-4",
+        api_key: Optional[str] = None,
+        temperature: float = 0.7,
+        system_prompt: Optional[str] = None
+    ):
         try:
             from openai import OpenAI
         except ImportError:
@@ -287,7 +336,13 @@ class OpenAIClient(LLMClient):
 
         self.client = OpenAI(api_key=self.api_key)
         self.model = model
+        self.temperature = temperature
+        self.system_prompt = system_prompt
         self.history = []
+
+        # Prepend system prompt if provided
+        if system_prompt:
+            self.history.append({"role": "system", "content": system_prompt})
 
     @property
     def provider_name(self) -> str:
@@ -299,7 +354,7 @@ class OpenAIClient(LLMClient):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=self.history,
-            temperature=0.7
+            temperature=self.temperature
         )
 
         ai_message = response.choices[0].message.content
@@ -322,43 +377,64 @@ def create_llm_client(provider: str, model: str, **kwargs) -> LLMClient:
     Args:
         provider: One of 'ollama', 'together', 'anthropic', 'openai'
         model: Model name/identifier
-        **kwargs: Provider-specific parameters (api_key, base_url, etc.)
+        **kwargs: Provider-specific parameters:
+            - temperature: float (0.0-1.0, default 0.7)
+            - system_prompt: str (optional system/context prompt)
+            - api_key: str (for cloud providers)
+            - base_url: str (for Ollama)
 
     Returns:
         Configured LLMClient instance
 
     Example:
-        # Ollama (local)
-        client = create_llm_client('ollama', 'llama3.2:latest')
+        # Ollama (local) with custom temperature
+        client = create_llm_client('ollama', 'llama3.2:latest', temperature=0.3)
 
-        # Together AI (fast cloud)
-        client = create_llm_client('together', 'meta-llama/Llama-3.2-3B-Instruct')
+        # Together AI with system prompt
+        client = create_llm_client(
+            'together',
+            'meta-llama/Llama-3.2-3B-Instruct',
+            temperature=0.5,
+            system_prompt="You are a thoughtful dialogue partner."
+        )
 
         # Anthropic
         client = create_llm_client('anthropic', 'claude-sonnet-4-20250514')
     """
+    # Common parameters
+    temperature = kwargs.get('temperature', 0.7)
+    system_prompt = kwargs.get('system_prompt')
+
     if provider == 'ollama':
         return OllamaClient(
             model=model,
-            base_url=kwargs.get('base_url', 'http://localhost:11434')
+            base_url=kwargs.get('base_url', 'http://localhost:11434'),
+            temperature=temperature,
+            system_prompt=system_prompt
         )
 
     elif provider == 'together':
         return TogetherClient(
             model=model,
-            api_key=kwargs.get('api_key')
+            api_key=kwargs.get('api_key'),
+            temperature=temperature,
+            system_prompt=system_prompt
         )
 
     elif provider == 'anthropic':
         return AnthropicClient(
             model=model,
-            api_key=kwargs.get('api_key')
+            api_key=kwargs.get('api_key'),
+            temperature=temperature,
+            system_prompt=system_prompt
         )
 
     elif provider == 'openai':
         return OpenAIClient(
             model=model,
-            api_key=kwargs.get('api_key')
+            api_key=kwargs.get('api_key'),
+            temperature=temperature,
+            system_prompt=system_prompt
         )
 
     else:
