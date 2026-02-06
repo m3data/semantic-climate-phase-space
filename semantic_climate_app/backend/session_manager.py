@@ -87,6 +87,7 @@ class SessionManager:
         self.min_turns = min_turns
         self.max_turns = max_turns
         self.metrics_history = []
+        self.gate_history = []
         self.model_name = None
         self.embedding_model = embedding_model
         self.thresholds_version = "v1_narrative_adjusted"
@@ -311,6 +312,10 @@ class SessionManager:
             **metrics
         })
 
+    def add_gate_decision(self, decision: dict):
+        """Store a safety gate decision in history."""
+        self.gate_history.append(decision)
+
     def set_model(self, model_name: str):
         """Set the LLM model being used."""
         self.model_name = model_name
@@ -423,6 +428,7 @@ class SessionManager:
                 for idx, turn in enumerate(self.turns)
             ],
             "metrics_history": self.metrics_history,
+            "gate_history": self.gate_history,
             "biosignal_stream": self.biosignal_stream
         }
 
@@ -432,6 +438,7 @@ class SessionManager:
         self.created_at = datetime.now()
         self.turns.clear()
         self.metrics_history.clear()
+        self.gate_history.clear()
         self.model_name = None
         self.temperature = None
         self.system_prompt = None

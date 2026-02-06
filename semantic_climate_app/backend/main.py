@@ -38,6 +38,7 @@ from embedding_service import EmbeddingService
 from metrics_service import MetricsService
 from session_manager import SessionManager
 from ebs_client import EBSClient, get_ebs_client
+from safety_gate import SafetyGate
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -227,6 +228,28 @@ async def get_session_status():
     return active_session_info
 
 
+# Track active safety gate for external clients (e.g., Claude Code)
+active_safety_gate: SafetyGate | None = None
+
+
+@app.get("/api/gate/status")
+async def get_gate_status():
+    """
+    Get current safety gate state for external clients.
+
+    Returns the latest gate decision from the active session,
+    or inactive status if no session / no gate evaluations yet.
+    """
+    if active_safety_gate is None:
+        return {"active": False, "latest": None}
+    latest = active_safety_gate.get_latest()
+    return {
+        "active": True,
+        "latest": latest.to_dict() if latest else None,
+        "total_evaluations": len(active_safety_gate.get_audit_trail())
+    }
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """
@@ -239,6 +262,8 @@ async def websocket_endpoint(websocket: WebSocket):
     """
     await websocket.accept()
 
+    global active_safety_gate
+
     # Session state
     llm_client = None
     session = SessionManager(
@@ -246,6 +271,8 @@ async def websocket_endpoint(websocket: WebSocket):
         max_turns=50,
         embedding_model=embedding_service.model_name
     )
+    safety_gate = SafetyGate()
+    active_safety_gate = safety_gate
 
     # EBS biosignal callback - store in session and forward to client
     sub_id = None
@@ -365,6 +392,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                     # 4. Calculate metrics if enough turns
                     metrics_result = None
+                    gate_decision = None
                     if session.can_analyze():
                         t4 = time.time() * 1000
                         embeddings = session.get_embeddings()
@@ -389,6 +417,10 @@ async def websocket_endpoint(websocket: WebSocket):
                         print(f"[TIMING] Metrics calc: {int(t5-t4)}ms", flush=True)
                         session.add_metrics_result(metrics_result)
 
+                        # Evaluate safety gate (observation only — logs but does not inject)
+                        gate_decision = safety_gate.evaluate(metrics_result, session.get_turn_count())
+                        session.add_gate_decision(gate_decision.to_dict())
+
                         # Send semiotic marker to EBS for JSONL coupling
                         if ebs_client and ebs_client.is_connected():
                             await ebs_client.send_semiotic_marker(metrics_result)
@@ -407,7 +439,8 @@ async def websocket_endpoint(websocket: WebSocket):
                         "text": ai_text,
                         "turn_count": session.get_turn_count(),
                         "metrics": metrics_result,
-                        "biosignal": biosignal
+                        "biosignal": biosignal,
+                        "gate": gate_decision.to_dict() if gate_decision else None
                     }))
 
                 except Exception as e:
@@ -452,6 +485,7 @@ async def websocket_endpoint(websocket: WebSocket):
             # Reset session
             elif msg_type == "reset":
                 session.reset()
+                safety_gate.reset()
                 if llm_client:
                     llm_client.reset_history()
                 await websocket.send_text(json.dumps({
@@ -473,8 +507,9 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         print(f"WebSocket error: {e}")
     finally:
-        # Clear session info for external clients
+        # Clear session info and gate for external clients
         update_session_info(None, connected=False)
+        active_safety_gate = None
         # Unsubscribe from EBS when client disconnects
         if sub_id is not None and ebs_client:
             ebs_client.unsubscribe(sub_id)
