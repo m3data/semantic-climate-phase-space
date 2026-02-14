@@ -140,6 +140,6 @@ __all__ = [
     'EXPORT_SCHEMA_VERSION',
 ]
 
-__version__ = '0.3.0'
+__version__ = '0.4.0'
 __author__ = 'Semantic Climate Phase Space Project'
 __credits__ = ['Daria Morgoulis (core metrics)']
