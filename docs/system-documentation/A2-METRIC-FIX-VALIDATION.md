@@ -144,7 +144,7 @@ The Grunch denial session provided real-world validation:
 |-------|------------|---------|---------------|
 | Denial loop | ~0.5 ("fragmentation") | **~0.87-1.27** ("lock-in") | HR rising, chest tight |
 
-**Insight:** The body detected the attractor trap that the broken metric missed. The fixed α aligns with somatic sensing.
+**Insight:** The corrected α confirmed what the body had been registering — both channels converged on the same coupling disruption. When the metric was broken, only the somatic channel signalled lock-in; when fixed, both agreed.
 
 ### Conclusion
 

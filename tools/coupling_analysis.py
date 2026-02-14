@@ -246,15 +246,15 @@ def interpret_correlation(
     if abs(peak_lag_seconds) < 1.0:
         # Near-zero lag
         timing = "synchronous (near-zero lag)"
-        causal = "coincident variation, no clear causal direction"
+        causal = "coincident variation at interpolated timescale"
     elif peak_lag_seconds > 0:
-        # Positive lag: HR leads Δκ
-        timing = f"HR leads Δκ by {abs(peak_lag_seconds):.1f}s"
-        causal = "physiological state may influence semantic trajectory"
+        # Positive lag: peak association with HR shifted forward
+        timing = f"peak association at HR offset +{abs(peak_lag_seconds):.1f}s"
+        causal = "NOTE: apparent lag may reflect instrumentation asymmetry (1Hz cardiac vs turn-boundary semantic), not temporal precedence"
     else:
-        # Negative lag: Δκ leads HR
-        timing = f"Δκ leads HR by {abs(peak_lag_seconds):.1f}s"
-        causal = "semantic content may influence physiological state"
+        # Negative lag: peak association with Δκ shifted forward
+        timing = f"peak association at Δκ offset +{abs(peak_lag_seconds):.1f}s"
+        causal = "NOTE: apparent lag may reflect instrumentation asymmetry (1Hz cardiac vs turn-boundary semantic), not temporal precedence"
 
     strength = "strong" if abs(peak_correlation) > 0.5 else \
                "moderate" if abs(peak_correlation) > 0.3 else "weak"
@@ -300,7 +300,7 @@ def plot_correlogram(
     ax.axvline(0, color='gray', linestyle='-', alpha=0.3)
     ax.axhline(0, color='gray', linestyle='-', alpha=0.3)
 
-    ax.set_xlabel('Lag (seconds)\n← Δκ leads | HR leads →')
+    ax.set_xlabel('Lag (seconds)\n← peak at Δκ offset | peak at HR offset →')
     ax.set_ylabel('Cross-correlation')
     ax.set_title(title)
     ax.legend(loc='upper right')
