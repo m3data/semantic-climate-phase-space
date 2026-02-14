@@ -1,5 +1,10 @@
 # Semantic Climate Phase Space
 
+![Repo Status](https://img.shields.io/badge/REPO_STATUS-Active_Research-blue?style=for-the-badge&labelColor=8b5e3c&color=e5dac1)
+![Version](https://img.shields.io/badge/VERSION-0.4.0-blue?style=for-the-badge&labelColor=3b82f6&color=1e40af)
+![License](https://img.shields.io/badge/LICENSE-ESL--A-green?style=for-the-badge&labelColor=10b981&color=047857)
+![Tests](https://img.shields.io/badge/TESTS-272_passing-green?style=for-the-badge&labelColor=10b981&color=047857)
+
 **It matters less about where we are, and more about how we move together.**
 
 A dynamical-systems framework for studying how relational meaning unfolds in dialogue.  
