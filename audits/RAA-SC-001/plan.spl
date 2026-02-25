@@ -1,0 +1,192 @@
+; Recursive Adversarial Audit
+; Target: Semantic Climate Phase Space metric computation pipeline
+; Audit ID: RAA-SC-001
+; Generated: 2026-02-25
+
+(meta plan
+  (id "RAA-SC-001")
+  (title "Recursive Adversarial Audit — Semantic Climate Phase Space")
+  (version "1.0.0")
+  (status "active")
+  (created "2026-02-25")
+  (author "agent:kairos")
+  (description "RAA-SC-001: 5 claims against Semantic Climate Phase Space metric computation pipeline. Full adversarial audit: Phase A (5 independent audits + synthesis), Phase B (5 counter-audits + convergence evaluator)."))
+
+;; AGENTS
+(given agent-claude-available)
+
+;; ============================================================
+;; PHASE A: INDEPENDENT AUDIT
+;; All tasks run in parallel
+;; ============================================================
+
+;; A1: DFA/α fractal similarity
+(given task-a1-dfa-alpha-fractal-similarity)
+(given no-deps-a1)
+
+(meta task-a1-dfa-alpha-fractal-similarity
+  (description "CLAIM: DFA/α implementation correctly computes fractal similarity via detrended fluctuation analysis on semantic velocity (inter-turn cosine distances), producing meaningful α exponents where α≈0.5=white noise, α≈1.0=pink noise, α>1.2=lock-in. VERIFY: Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py — focus on fractal_similarity_robust(), _calculate_alpha_single(), and calculate_all_metrics() (the semantic velocity computation). Also read test files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/tests/. Check: 1) Is DFA implemented correctly — cumulative sum of mean-centred signal, non-overlapping segments, polynomial detrending, RMS fluctuation, log-log regression? 2) Is the input signal correct — inter-turn cosine distances (semantic velocity), NOT embedding norms? 3) Do the scale parameters (min_scale=4, max_scale_factor=0.25) produce a meaningful range for typical dialogue lengths (20-60 turns → 19-59 velocity samples)? 4) Does the bootstrap CI resample correctly (should resample time series, not iid)? 5) Does the log-log regression handle edge cases (zero fluctuations, insufficient scales)? 6) Is the interpretation correct — α≈0.5 white noise, α≈1.0 pink noise, α>1.2 lock-in? 7) What happens with exactly 20 turns (minimum viable)? Write finding to findings-a/01-dfa-alpha-fractal-similarity.md.")
+  (acceptance "1. Finding written to findings-a/01-dfa-alpha-fractal-similarity.md using Phase A output format from CLAUDE.md. 2. Evidence includes file paths and line numbers. 3. Verdict: CONFIRMED, PARTIAL, NOT CONFIRMED, or CONCERN.")
+  (phase "A"))
+
+(normally r-ready-a1 (and task-a1-dfa-alpha-fractal-similarity no-deps-a1) ready-a1)
+(normally r-assign-a1 (and ready-a1 agent-claude-available) assign-to-a1-claude)
+
+;; A2: Δκ semantic curvature
+(given task-a2-delta-kappa-semantic-curvature)
+(given no-deps-a2)
+
+(meta task-a2-delta-kappa-semantic-curvature
+  (description "CLAIM: Δκ (semantic curvature) correctly computes local trajectory curvature via discrete Frenet-Serret formula κ(t)=||a_perp||/||v||², independent of start/end points. VERIFY: Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py — focus on semantic_curvature_enhanced(), _compute_local_curvatures(), _calculate_curvature_single(). Also read test files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/tests/. Check: 1) Is the Frenet-Serret formula correctly implemented — velocity as first difference, acceleration as second difference, a_perp via projection, κ=||a_perp||/||v||²? 2) Is the formula correct for high-dimensional spaces (cross product not defined, perpendicular projection used instead)? 3) Does the implementation handle degenerate cases — zero velocity, collinear trajectory, duplicate embeddings? 4) Is the bootstrap CI for curvature valid — sorting resampled indices preserves temporal order but creates gaps/duplicates? 5) Is the permutation test for significance appropriate — shuffled trajectory as null hypothesis? 6) Does mean local curvature correctly summarise trajectory bending? 7) Is the threshold 0.35 reasonable for semantic embedding trajectories? Write finding to findings-a/02-delta-kappa-semantic-curvature.md.")
+  (acceptance "1. Finding written to findings-a/02-delta-kappa-semantic-curvature.md using Phase A output format from CLAUDE.md. 2. Evidence includes file paths and line numbers. 3. Verdict: CONFIRMED, PARTIAL, NOT CONFIRMED, or CONCERN.")
+  (phase "A"))
+
+(normally r-ready-a2 (and task-a2-delta-kappa-semantic-curvature no-deps-a2) ready-a2)
+(normally r-assign-a2 (and ready-a2 agent-claude-available) assign-to-a2-claude)
+
+;; A3: ΔH entropy shift JSD
+(given task-a3-delta-h-entropy-shift-jsd)
+(given no-deps-a3)
+
+(meta task-a3-delta-h-entropy-shift-jsd
+  (description "CLAIM: ΔH (entropy shift) correctly computes semantic reorganization via Jensen-Shannon divergence on shared clustering of pre/post embeddings, bounded [0,1]. VERIFY: Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py — focus on entropy_shift_comprehensive(), compute_js_divergence(), calculate_distributions_shared(). Also read test files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/tests/. Check: 1) Is JSD correctly implemented — M=(P+Q)/2, JSD=0.5*KL(P||M)+0.5*KL(Q||M), using log base 2 for [0,1] bound? 2) Is shared clustering correct — fit on full trajectory, split labels to pre/post, compute distributions over all cluster IDs? 3) Does consensus across methods (kmeans+gmm) and cluster counts (6,8,10) add robustness or noise? 4) Does the stability_score (1 - std/mean) accurately reflect consensus? 5) Is the bootstrap CI valid — resampling pre and post independently, then re-clustering? 6) Does the epsilon (1e-12) for numerical stability affect the JSD bound? 7) What happens when pre and post have very different sizes or when embeddings are near-identical? Write finding to findings-a/03-delta-h-entropy-shift-jsd.md.")
+  (acceptance "1. Finding written to findings-a/03-delta-h-entropy-shift-jsd.md using Phase A output format from CLAUDE.md. 2. Evidence includes file paths and line numbers. 3. Verdict: CONFIRMED, PARTIAL, NOT CONFIRMED, or CONCERN.")
+  (phase "A"))
+
+(normally r-ready-a3 (and task-a3-delta-h-entropy-shift-jsd no-deps-a3) ready-a3)
+(normally r-assign-a3 (and ready-a3 agent-claude-available) assign-to-a3-claude)
+
+;; A4: Ψ vector assembly
+(given task-a4-psi-vector-assembly)
+(given no-deps-a4)
+
+(meta task-a4-psi-vector-assembly
+  (description "CLAIM: Ψ vector assembly correctly composes four substrates (semantic, temporal, affective, biosignal) into a coherent phase-space representation with documented compression. VERIFY: Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/substrates.py — all substrate functions. Also read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/analyzer.py and /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/extensions.py for how substrates are assembled. Also read test files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/tests/. Check: 1) Does compute_semantic_substrate correctly compose Δκ, ΔH, α — are the z-score parameters (center/std) empirically calibrated or arbitrary? 2) Does compute_temporal_substrate correctly measure metric stability — is windowed recomputation of all three metrics too expensive or correct? 3) Does compute_affective_substrate correctly capture dialogue affect — are VADER scores meaningful for AI dialogue text? 4) Does compute_biosignal_substrate correctly normalise HR — is (HR-80)/40 with tanh appropriate? 5) Are all substrates on comparable scales? Do the compression functions (tanh, 1/(1+CV)) produce comparable ranges? 6) Does the assembled Ψ vector match the preprint Table 1 specification? 7) Are the weights in the semantic substrate (0.577, 0.577, 0.577) justified — they are 1/√3 which assumes equal contribution, but is this empirically supported? Write finding to findings-a/04-psi-vector-assembly.md.")
+  (acceptance "1. Finding written to findings-a/04-psi-vector-assembly.md using Phase A output format from CLAUDE.md. 2. Evidence includes file paths and line numbers. 3. Verdict: CONFIRMED, PARTIAL, NOT CONFIRMED, or CONCERN.")
+  (phase "A"))
+
+(normally r-ready-a4 (and task-a4-psi-vector-assembly no-deps-a4) ready-a4)
+(normally r-assign-a4 (and ready-a4 agent-claude-available) assign-to-a4-claude)
+
+;; A5: Coupling mode classification
+(given task-a5-coupling-mode-classification)
+(given no-deps-a5)
+
+(meta task-a5-coupling-mode-classification
+  (description "CLAIM: Coupling mode classification (attractor basin detection) correctly maps Ψ position and raw metrics into 10 canonical dialogue configurations with discriminating features between performative and genuine engagement. VERIFY: Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/basins.py — focus on BasinDetector._classify_basin(), detect(), detect_with_hysteresis(), compute_soft_membership(). Also read test files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/tests/. Check: 1) Are all 10 basins reachable — can the threshold logic produce each basin for some input? 2) Is the ordering of threshold checks correct — early returns can shadow later basins? 3) Does the performative/genuine distinction (Collaborative Inquiry vs Cognitive Mimicry vs Reflexive Performance) actually discriminate — are the hedging/turn_ratio/dk_variance thresholds empirically grounded or arbitrary? 4) Does hysteresis prevent flickering — are entry/exit thresholds asymmetric as claimed? 5) Does soft membership via softmax on centroid distances produce meaningful probabilities — are centroids well-separated? 6) Is the basin taxonomy (10 basins from 4 input dimensions) over-specified — can 4D input support 10 distinct regions? 7) Does the code match the preprint Appendix B taxonomy? Write finding to findings-a/05-coupling-mode-classification.md.")
+  (acceptance "1. Finding written to findings-a/05-coupling-mode-classification.md using Phase A output format from CLAUDE.md. 2. Evidence includes file paths and line numbers. 3. Verdict: CONFIRMED, PARTIAL, NOT CONFIRMED, or CONCERN.")
+  (phase "A"))
+
+(normally r-ready-a5 (and task-a5-coupling-mode-classification no-deps-a5) ready-a5)
+(normally r-assign-a5 (and ready-a5 agent-claude-available) assign-to-a5-claude)
+
+;; ============================================================
+;; PHASE A SYNTHESIS
+;; Depends on all Phase A completions
+;; ============================================================
+
+(given task-a-synthesis)
+
+(meta task-a-synthesis
+  (description "Synthesise all Phase A findings. Read all files in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/. Produce a synthesis that: 1) Summarises each finding in ONE LINE with its verdict. 2) Identifies patterns — where do concerns cluster? 3) Highlights the 2-3 findings most worth adversarial review. 4) Notes any contradictions between findings. 5) Specifically flag anything that affects the preprint claim that α=0.77-1.27 during the Grunch denial phase indicates lock-in (this is the load-bearing finding). Write to findings-a/SYNTHESIS-A.md.")
+  (acceptance "1. Synthesis written to findings-a/SYNTHESIS-A.md. 2. All findings summarised. 3. Patterns identified. 4. Priority findings for Phase B highlighted.")
+  (phase "A-synthesis"))
+
+(normally r-ready-a-synthesis
+  (and task-a-synthesis
+       completed-a1-dfa-alpha-fractal-similarity
+       completed-a2-delta-kappa-semantic-curvature
+       completed-a3-delta-h-entropy-shift-jsd
+       completed-a4-psi-vector-assembly
+       completed-a5-coupling-mode-classification)
+  ready-a-synthesis)
+
+(normally r-assign-a-synthesis
+  (and ready-a-synthesis agent-claude-available)
+  assign-to-a-synthesis-claude)
+
+;; ============================================================
+;; PHASE B: ADVERSARIAL COUNTER-AUDIT
+;; Depends on Phase A synthesis
+;; ============================================================
+
+;; B1: Counter-audit DFA/α
+(given task-b1-counter-dfa-alpha-fractal-similarity)
+
+(meta task-b1-counter-dfa-alpha-fractal-similarity
+  (description "COUNTER-AUDIT of Phase A finding on DFA/α fractal similarity. Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/01-dfa-alpha-fractal-similarity.md to understand Phase A's conclusion. Then INDEPENDENTLY re-read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py and perform your own analysis. Specifically look for: 1) Bootstrap resampling destroys temporal structure — DFA requires ordered time series, but bootstrap_alphas resamples indices iid. Does this invalidate the CI? 2) With 19 velocity samples (20 turns), max_scale = max(int(19*0.25), 5) = 5. Log-spaced scales from 4 to 5 gives ~2 unique scales. Is α meaningful with 2-3 scale points? 3) The bare except clause in _calculate_alpha_single masks errors silently. What errors could occur? 4) Does the semantic velocity signal (cosine distances) have the stationarity properties DFA assumes? 5) Are the interpretation thresholds (0.5, 1.0, 1.2) from DFA literature or arbitrary? Write to findings-b/01-counter-dfa-alpha-fractal-similarity.md.")
+  (acceptance "1. Counter-audit written to findings-b/01-counter-dfa-alpha-fractal-similarity.md using Phase B output format from CLAUDE.md. 2. Independent code analysis performed. 3. Verdict: AGREE, UPGRADE, DOWNGRADE, or CONTEST with evidence.")
+  (phase "B"))
+
+(normally r-ready-b1 (and task-b1-counter-dfa-alpha-fractal-similarity completed-a-synthesis) ready-b1)
+(normally r-assign-b1 (and ready-b1 agent-claude-available) assign-to-b1-claude)
+
+;; B2: Counter-audit Δκ
+(given task-b2-counter-delta-kappa-semantic-curvature)
+
+(meta task-b2-counter-delta-kappa-semantic-curvature
+  (description "COUNTER-AUDIT of Phase A finding on Δκ semantic curvature. Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/02-delta-kappa-semantic-curvature.md to understand Phase A's conclusion. Then INDEPENDENTLY re-read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py and perform your own analysis. Specifically look for: 1) The bootstrap sorts resampled indices — this creates a trajectory with gaps and duplicates. Does this bias curvature upward (sudden jumps) or downward (repeated points → zero velocity)? 2) κ(t) = ||a_perp|| / ||v||² — is this the correct discrete Frenet-Serret formula? Some references use ||v||³ in the denominator. Which is mathematically correct? 3) Zero velocity is handled by returning 0.0 — but is this correct? Zero velocity with non-zero acceleration should indicate infinite curvature (sharp turn). 4) The permutation null randomises the entire trajectory — is this the right null hypothesis for semantic curvature? 5) Mean curvature as the summary statistic — does this hide important distributional features (outliers, skew)? Write to findings-b/02-counter-delta-kappa-semantic-curvature.md.")
+  (acceptance "1. Counter-audit written to findings-b/02-counter-delta-kappa-semantic-curvature.md using Phase B output format from CLAUDE.md. 2. Independent code analysis performed. 3. Verdict: AGREE, UPGRADE, DOWNGRADE, or CONTEST with evidence.")
+  (phase "B"))
+
+(normally r-ready-b2 (and task-b2-counter-delta-kappa-semantic-curvature completed-a-synthesis) ready-b2)
+(normally r-assign-b2 (and ready-b2 agent-claude-available) assign-to-b2-claude)
+
+;; B3: Counter-audit ΔH
+(given task-b3-counter-delta-h-entropy-shift-jsd)
+
+(meta task-b3-counter-delta-h-entropy-shift-jsd
+  (description "COUNTER-AUDIT of Phase A finding on ΔH entropy shift. Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/03-delta-h-entropy-shift-jsd.md to understand Phase A's conclusion. Then INDEPENDENTLY re-read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/core_metrics.py and perform your own analysis. Specifically look for: 1) With 20 turns and split_ratio=0.5, pre=10 and post=10 embeddings. KMeans with n_clusters=10 on 20 points — each cluster gets ~2 points. Is this statistically meaningful? 2) The consensus across 6 combinations (2 methods × 3 cluster counts) — does averaging JSD across different granularities produce a meaningful metric? 3) The epsilon (1e-12) is added before renormalization — does this affect the JSD bound? After adding epsilon to distributions and renormalizing, is JSD still bounded by log2(2)=1? 4) The bootstrap resamples pre and post independently but re-clusters jointly — does this produce a valid CI? 5) Stability score = 1 - std/mean — this can be negative or > 1. Is the clamp (max 0, min 1) hiding instability? Write to findings-b/03-counter-delta-h-entropy-shift-jsd.md.")
+  (acceptance "1. Counter-audit written to findings-b/03-counter-delta-h-entropy-shift-jsd.md using Phase B output format from CLAUDE.md. 2. Independent code analysis performed. 3. Verdict: AGREE, UPGRADE, DOWNGRADE, or CONTEST with evidence.")
+  (phase "B"))
+
+(normally r-ready-b3 (and task-b3-counter-delta-h-entropy-shift-jsd completed-a-synthesis) ready-b3)
+(normally r-assign-b3 (and ready-b3 agent-claude-available) assign-to-b3-claude)
+
+;; B4: Counter-audit Ψ vector
+(given task-b4-counter-psi-vector-assembly)
+
+(meta task-b4-counter-psi-vector-assembly
+  (description "COUNTER-AUDIT of Phase A finding on Ψ vector assembly. Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/04-psi-vector-assembly.md to understand Phase A's conclusion. Then INDEPENDENTLY re-read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/substrates.py, /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/analyzer.py, and /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/extensions.py. Specifically look for: 1) The z-score parameters for semantic substrate (center 0.15, std 0.15 for Δκ and ΔH; center 0.8, std 0.3 for α) — are these calibrated from real data or estimated? Wrong centers shift the entire substrate. 2) Temporal substrate recomputes all three metrics in sliding windows — this is O(n² × bootstrap) per call. Is this actually run in production? 3) Affective substrate VADER scores on AI-generated text — VADER was trained on social media. How does it perform on LLM outputs? 4) Biosignal substrate is trivially simple — just HR normalization. Is this adequate for the biosignal dimension of Ψ? 5) Do the four substrates actually combine into a vector anywhere, or are they computed independently and passed to basin detection as separate fields? Write to findings-b/04-counter-psi-vector-assembly.md.")
+  (acceptance "1. Counter-audit written to findings-b/04-counter-psi-vector-assembly.md using Phase B output format from CLAUDE.md. 2. Independent code analysis performed. 3. Verdict: AGREE, UPGRADE, DOWNGRADE, or CONTEST with evidence.")
+  (phase "B"))
+
+(normally r-ready-b4 (and task-b4-counter-psi-vector-assembly completed-a-synthesis) ready-b4)
+(normally r-assign-b4 (and ready-b4 agent-claude-available) assign-to-b4-claude)
+
+;; B5: Counter-audit coupling mode classification
+(given task-b5-counter-coupling-mode-classification)
+
+(meta task-b5-counter-coupling-mode-classification
+  (description "COUNTER-AUDIT of Phase A finding on coupling mode classification. Read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/05-coupling-mode-classification.md to understand Phase A's conclusion. Then INDEPENDENTLY re-read /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/src/basins.py and perform your own analysis. Specifically look for: 1) Basin detection order creates priority — Deep Resonance is checked first, Transitional is the fallback. Does this ordering bias classification toward specific basins? 2) The Collaborative Inquiry vs Cognitive Mimicry distinction relies on hedging_density and turn_length_ratio — but these are only computed if dialogue_context is provided. What happens when it is not provided (the common case in production)? All three scores default to 0, so classification falls through to Transitional. 3) BASIN_CENTROIDS uses psi_semantic but _classify_basin uses sem (which is psi_semantic from the vector). Are these the same value? Centroids range 0-0.5 but tanh output ranges -1 to 1 — scale mismatch? 4) Soft membership via softmax — temperature=1.0 may be too high for 4D distances, spreading probability too evenly. 5) The 10 basins in 4D space — information-theoretic analysis of discrimination capacity. Write to findings-b/05-counter-coupling-mode-classification.md.")
+  (acceptance "1. Counter-audit written to findings-b/05-counter-coupling-mode-classification.md using Phase B output format from CLAUDE.md. 2. Independent code analysis performed. 3. Verdict: AGREE, UPGRADE, DOWNGRADE, or CONTEST with evidence.")
+  (phase "B"))
+
+(normally r-ready-b5 (and task-b5-counter-coupling-mode-classification completed-a-synthesis) ready-b5)
+(normally r-assign-b5 (and ready-b5 agent-claude-available) assign-to-b5-claude)
+
+;; ============================================================
+;; EVALUATOR: CONVERGENCE ASSESSMENT
+;; ============================================================
+
+(given task-convergence-eval)
+
+(meta task-convergence-eval
+  (description "CONVERGENCE EVALUATION. Read ALL findings in /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-a/ and /Users/m3untold/Code/EarthianLabs/semantic-climate-phase-space/audits/RAA-SC-001/findings-b/. For each claim: 1) Did Phase A and Phase B CONVERGE (same verdict, similar evidence)? 2) Did they DIVERGE (different verdicts or materially different evidence)? 3) Are they CIRCLING (disagreeing on something unresolvable by static analysis)? Produce convergence scores (0.0-1.0) per finding and overall. Identify structurally unresolvable findings. List recommended remediation actions ordered by severity (P0=preprint-blocking, P1=should fix before submission, P2=fix after submission, P3=future work). Specifically assess: does anything found here invalidate the preprint's core claim that α=0.77-1.27 during the Grunch denial phase indicates semantic lock-in? Write to CONVERGENCE-REPORT.md in the audit directory root.")
+  (acceptance "1. CONVERGENCE-REPORT.md written. 2. Per-finding convergence scores. 3. Overall confidence score. 4. Structurally unresolvable findings flagged. 5. Prioritised remediation actions with preprint impact assessment.")
+  (phase "eval")
+  (priority "critical")
+  (requires-human-review "true"))
+
+(normally r-ready-convergence-eval
+  (and task-convergence-eval
+       completed-b1-counter-dfa-alpha-fractal-similarity
+       completed-b2-counter-delta-kappa-semantic-curvature
+       completed-b3-counter-delta-h-entropy-shift-jsd
+       completed-b4-counter-psi-vector-assembly
+       completed-b5-counter-coupling-mode-classification)
+  ready-convergence-eval)
+
+(normally r-assign-convergence-eval
+  (and ready-convergence-eval agent-claude-available)
+  assign-to-convergence-eval-claude)
