@@ -190,3 +190,68 @@
 (normally r-assign-convergence-eval
   (and ready-convergence-eval agent-claude-available)
   assign-to-convergence-eval-claude)
+
+(claims agent:claude
+  :at "2026-02-25T00:12:11Z"
+  (given claim-v1-a1-dfa-alpha-fractal-similarity-by-claude)
+  (normally r-cl-state-v1-a1-dfa-alpha-fractal-similarity-by-claude claim-v1-a1-dfa-alpha-fractal-similarity-by-claude state-claimed-v1-a1-dfa-alpha-fractal-similarity-by-claude)
+  (normally r-cl-chain-v1-a1-dfa-alpha-fractal-similarity-by-claude state-claimed-v1-a1-dfa-alpha-fractal-similarity-by-claude claimed-a1-dfa-alpha-fractal-similarity)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:12:13Z"
+  (given claim-v1-a2-delta-kappa-semantic-curvature-by-claude)
+  (normally r-cl-state-v1-a2-delta-kappa-semantic-curvature-by-claude claim-v1-a2-delta-kappa-semantic-curvature-by-claude state-claimed-v1-a2-delta-kappa-semantic-curvature-by-claude)
+  (normally r-cl-chain-v1-a2-delta-kappa-semantic-curvature-by-claude state-claimed-v1-a2-delta-kappa-semantic-curvature-by-claude claimed-a2-delta-kappa-semantic-curvature)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:12:14Z"
+  (given claim-v1-a3-delta-h-entropy-shift-jsd-by-claude)
+  (normally r-cl-state-v1-a3-delta-h-entropy-shift-jsd-by-claude claim-v1-a3-delta-h-entropy-shift-jsd-by-claude state-claimed-v1-a3-delta-h-entropy-shift-jsd-by-claude)
+  (normally r-cl-chain-v1-a3-delta-h-entropy-shift-jsd-by-claude state-claimed-v1-a3-delta-h-entropy-shift-jsd-by-claude claimed-a3-delta-h-entropy-shift-jsd)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:12:15Z"
+  (given claim-v1-a4-psi-vector-assembly-by-claude)
+  (normally r-cl-state-v1-a4-psi-vector-assembly-by-claude claim-v1-a4-psi-vector-assembly-by-claude state-claimed-v1-a4-psi-vector-assembly-by-claude)
+  (normally r-cl-chain-v1-a4-psi-vector-assembly-by-claude state-claimed-v1-a4-psi-vector-assembly-by-claude claimed-a4-psi-vector-assembly)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:12:17Z"
+  (given claim-v1-a5-coupling-mode-classification-by-claude)
+  (normally r-cl-state-v1-a5-coupling-mode-classification-by-claude claim-v1-a5-coupling-mode-classification-by-claude state-claimed-v1-a5-coupling-mode-classification-by-claude)
+  (normally r-cl-chain-v1-a5-coupling-mode-classification-by-claude state-claimed-v1-a5-coupling-mode-classification-by-claude claimed-a5-coupling-mode-classification)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:15:27Z"
+  (given completed-a2-delta-kappa-semantic-curvature)
+  (given spawn-result-v1-a2-delta-kappa-semantic-curvature-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:16:26Z"
+  (given completed-a1-dfa-alpha-fractal-similarity)
+  (given spawn-result-v1-a1-dfa-alpha-fractal-similarity-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:16:47Z"
+  (given completed-a4-psi-vector-assembly)
+  (given spawn-result-v1-a4-psi-vector-assembly-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:17:07Z"
+  (given completed-a5-coupling-mode-classification)
+  (given spawn-result-v1-a5-coupling-mode-classification-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:17:13Z"
+  (given completed-a3-delta-h-entropy-shift-jsd)
+  (given spawn-result-v1-a3-delta-h-entropy-shift-jsd-by-claude)
+)
