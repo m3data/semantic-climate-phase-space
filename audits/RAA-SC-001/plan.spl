@@ -333,3 +333,16 @@
   (given completed-b5-counter-coupling-mode-classification)
   (given spawn-result-v1-b5-counter-coupling-mode-classification-by-claude)
 )
+
+(claims agent:claude
+  :at "2026-02-25T00:37:05Z"
+  (given claim-v1-convergence-eval-by-claude)
+  (normally r-cl-state-v1-convergence-eval-by-claude claim-v1-convergence-eval-by-claude state-claimed-v1-convergence-eval-by-claude)
+  (normally r-cl-chain-v1-convergence-eval-by-claude state-claimed-v1-convergence-eval-by-claude claimed-convergence-eval)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:43:28Z"
+  (given completed-convergence-eval)
+  (given spawn-result-v1-convergence-eval-by-claude)
+)
