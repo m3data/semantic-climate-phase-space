@@ -268,3 +268,68 @@
   (given completed-a-synthesis)
   (given spawn-result-v1-a-synthesis-by-claude)
 )
+
+(claims agent:claude
+  :at "2026-02-25T00:24:08Z"
+  (given claim-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude)
+  (normally r-cl-state-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude claim-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude state-claimed-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude)
+  (normally r-cl-chain-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude state-claimed-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude claimed-b1-counter-dfa-alpha-fractal-similarity)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:24:09Z"
+  (given claim-v1-b2-counter-delta-kappa-semantic-curvature-by-claude)
+  (normally r-cl-state-v1-b2-counter-delta-kappa-semantic-curvature-by-claude claim-v1-b2-counter-delta-kappa-semantic-curvature-by-claude state-claimed-v1-b2-counter-delta-kappa-semantic-curvature-by-claude)
+  (normally r-cl-chain-v1-b2-counter-delta-kappa-semantic-curvature-by-claude state-claimed-v1-b2-counter-delta-kappa-semantic-curvature-by-claude claimed-b2-counter-delta-kappa-semantic-curvature)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:24:10Z"
+  (given claim-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude)
+  (normally r-cl-state-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude claim-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude state-claimed-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude)
+  (normally r-cl-chain-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude state-claimed-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude claimed-b3-counter-delta-h-entropy-shift-jsd)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:24:12Z"
+  (given claim-v1-b4-counter-psi-vector-assembly-by-claude)
+  (normally r-cl-state-v1-b4-counter-psi-vector-assembly-by-claude claim-v1-b4-counter-psi-vector-assembly-by-claude state-claimed-v1-b4-counter-psi-vector-assembly-by-claude)
+  (normally r-cl-chain-v1-b4-counter-psi-vector-assembly-by-claude state-claimed-v1-b4-counter-psi-vector-assembly-by-claude claimed-b4-counter-psi-vector-assembly)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:24:13Z"
+  (given claim-v1-b5-counter-coupling-mode-classification-by-claude)
+  (normally r-cl-state-v1-b5-counter-coupling-mode-classification-by-claude claim-v1-b5-counter-coupling-mode-classification-by-claude state-claimed-v1-b5-counter-coupling-mode-classification-by-claude)
+  (normally r-cl-chain-v1-b5-counter-coupling-mode-classification-by-claude state-claimed-v1-b5-counter-coupling-mode-classification-by-claude claimed-b5-counter-coupling-mode-classification)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:28:20Z"
+  (given completed-b4-counter-psi-vector-assembly)
+  (given spawn-result-v1-b4-counter-psi-vector-assembly-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:28:49Z"
+  (given completed-b2-counter-delta-kappa-semantic-curvature)
+  (given spawn-result-v1-b2-counter-delta-kappa-semantic-curvature-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:29:34Z"
+  (given completed-b3-counter-delta-h-entropy-shift-jsd)
+  (given spawn-result-v1-b3-counter-delta-h-entropy-shift-jsd-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:30:17Z"
+  (given completed-b1-counter-dfa-alpha-fractal-similarity)
+  (given spawn-result-v1-b1-counter-dfa-alpha-fractal-similarity-by-claude)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:32:17Z"
+  (given completed-b5-counter-coupling-mode-classification)
+  (given spawn-result-v1-b5-counter-coupling-mode-classification-by-claude)
+)
