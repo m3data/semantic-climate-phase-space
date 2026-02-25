@@ -255,3 +255,16 @@
   (given completed-a3-delta-h-entropy-shift-jsd)
   (given spawn-result-v1-a3-delta-h-entropy-shift-jsd-by-claude)
 )
+
+(claims agent:claude
+  :at "2026-02-25T00:18:53Z"
+  (given claim-v1-a-synthesis-by-claude)
+  (normally r-cl-state-v1-a-synthesis-by-claude claim-v1-a-synthesis-by-claude state-claimed-v1-a-synthesis-by-claude)
+  (normally r-cl-chain-v1-a-synthesis-by-claude state-claimed-v1-a-synthesis-by-claude claimed-a-synthesis)
+)
+
+(claims agent:claude
+  :at "2026-02-25T00:22:58Z"
+  (given completed-a-synthesis)
+  (given spawn-result-v1-a-synthesis-by-claude)
+)
