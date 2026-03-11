@@ -33,5 +33,8 @@ research/
 # Session data (contains conversation content)
 sessions/
 
+# Paper data (whitelisted for replication)
+!paper-data/
+
 # Context building files
 context-building/
