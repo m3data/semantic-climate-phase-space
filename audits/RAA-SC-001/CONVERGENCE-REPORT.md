@@ -272,4 +272,48 @@ No finding exhibits the CIRCLING pattern (irreducible disagreement on verdict di
 
 ---
 
-*RAA-SC-001 convergence evaluation complete. Remediation priority is P0-1 (Grunch length disclosure), P0-3 (stationarity caveat), P1-2 (Ψ_temporal CV fix), P2-1 (block bootstrap for DFA).*
+---
+
+## 8. Resolution Status (Updated 2026-03-11)
+
+The following table tracks which remediation actions have been addressed. The preprint is at `publications/papers/cross-substrate-coupling-preprint.md`.
+
+### P0 — Preprint-Blocking
+
+| ID | Action | Status | Resolution |
+|----|--------|--------|------------|
+| P0-1 | DFA scale limitation disclosure; reframe lock-in language | **RESOLVED** | §5.5 explicitly states 40 turns, <1 log-decade scale range. All lock-in claims throughout the paper reframed to "consistent with elevated semantic persistence" or "possible lock-in dynamics." Turn count reported. |
+| P0-2 | Bootstrap CI caveat | **RESOLVED** | §3.3 states block bootstrap planned but not conducted. §5.5 notes cross-correlation p-values violate independence assumptions. CIs not presented as valid uncertainty bounds. |
+| P0-3 | Stationarity caveat | **RESOLVED** | §5.5 describes the conversational-arc confound explicitly: declining variance conflated with power-law correlation by DFA-1. Notes KPSS test not conducted. Lock-in interpretation labelled as directional. |
+
+### P1 — Should Fix Before Submission
+
+| ID | Action | Status | Resolution |
+|----|--------|--------|------------|
+| P1-1 | DFA scale parameter tuning + R² filter | **DEFERRED** | Code-level fix for next release. Paper discloses limitation (§5.5). |
+| P1-2 | Ψ_temporal CV structural fix | **DEFERRED** | Code-level fix for next release. Ψ_temporal is not load-bearing for any preprint claim. |
+| P1-3 | Δκ threshold recalibration documentation | **PARTIALLY RESOLVED** | §3.2 notes implementations differ from Morgoulis. Threshold not presented as validated. |
+
+### P2 — Fix After Submission
+
+| ID | Action | Status | Notes |
+|----|--------|--------|-------|
+| P2-1 through P2-10 | Code-level fixes | **DEFERRED** | All P2 items are implementation improvements for the next codebase release, not preprint content issues. |
+
+### P3 — Future Work
+
+| ID | Action | Status | Notes |
+|----|--------|--------|-------|
+| P3-1 through P3-8 | Research extensions | **OPEN** | Mapped to future work in §5.5 and §6 of the preprint. |
+
+### Structurally Unresolvable Findings
+
+| ID | Finding | Status | Notes |
+|----|---------|--------|-------|
+| U1 | Grunch conversation length | **RESOLVED** | 40 turns, disclosed in §5.5. Below 100-turn reliability threshold — paper qualifies all α interpretations accordingly. |
+| U2 | Semantic velocity stationarity | **ACKNOWLEDGED** | Not tested; disclosed as limitation in §5.5. |
+| U3 | Lock-in threshold external validity | **ACKNOWLEDGED** | Not validated out-of-sample; paper reframes claims as directional. |
+| U4 | Production affective path | **RESOLVED** | VADER-only path used for all reported results. GoEmotions path is a code-level alternative not used in the preprint. |
+| U5 | Calibration parameter validity | **ACKNOWLEDGED** | Not validated against corpus. Paper presents metrics as exploratory instrumentation, not calibrated scales. |
+
+*RAA-SC-001 convergence evaluation complete. Resolution status added 2026-03-11.*
