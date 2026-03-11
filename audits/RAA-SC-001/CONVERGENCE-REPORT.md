@@ -282,7 +282,7 @@ The following table tracks which remediation actions have been addressed. The pr
 
 | ID | Action | Status | Resolution |
 |----|--------|--------|------------|
-| P0-1 | DFA scale limitation disclosure; reframe lock-in language | **RESOLVED** | §5.5 explicitly states 40 turns, <1 log-decade scale range. All lock-in claims throughout the paper reframed to "consistent with elevated semantic persistence" or "possible lock-in dynamics." Turn count reported. |
+| P0-1 | DFA scale limitation disclosure; reframe lock-in language | **PARTIALLY RESOLVED** | §5.5 discloses 40 turns, <1 log-decade scale range. §3.4, §4.1, figure captions reframed to "consistent with elevated semantic persistence." However, §5.3 ("The Lock-in Problem") and §5.6 still assert lock-in as definitive interpretation (e.g., "High α values (α > 1.0) indicate rigid repetition structure"). The α > 1.0/1.2 boundary used interpretively in the paper is not a coded threshold (code uses 0.70–0.90 for healthy range) — it is an empirical observation from the Grunch data serving as its own interpretive frame. Remaining lock-in assertions in §5.3 and §5.6 should be qualified or framed as discussion rather than finding. |
 | P0-2 | Bootstrap CI caveat | **RESOLVED** | §3.3 states block bootstrap planned but not conducted. §5.5 notes cross-correlation p-values violate independence assumptions. CIs not presented as valid uncertainty bounds. |
 | P0-3 | Stationarity caveat | **RESOLVED** | §5.5 describes the conversational-arc confound explicitly: declining variance conflated with power-law correlation by DFA-1. Notes KPSS test not conducted. Lock-in interpretation labelled as directional. |
 
@@ -313,7 +313,7 @@ The following table tracks which remediation actions have been addressed. The pr
 | U1 | Grunch conversation length | **RESOLVED** | 40 turns, disclosed in §5.5. Below 100-turn reliability threshold — paper qualifies all α interpretations accordingly. |
 | U2 | Semantic velocity stationarity | **ACKNOWLEDGED** | Not tested; disclosed as limitation in §5.5. |
 | U3 | Lock-in threshold external validity | **ACKNOWLEDGED** | Not validated out-of-sample; paper reframes claims as directional. |
-| U4 | Production affective path | **RESOLVED** | VADER-only path used for all reported results. GoEmotions path is a code-level alternative not used in the preprint. |
+| U4 | Production affective path | **RESOLVED** | VADER is the default path — GoEmotions only activates when an `emotion_service` argument is explicitly passed (substrates.py:317-389). No evidence in the codebase or session exports that GoEmotions was configured during any reported session. Paper describes VADER (§3.2, line 122). GoEmotions path remains undisclosed in the preprint but is not believed to have been active. |
 | U5 | Calibration parameter validity | **ACKNOWLEDGED** | Not validated against corpus. Paper presents metrics as exploratory instrumentation, not calibrated scales. |
 
 *RAA-SC-001 convergence evaluation complete. Resolution status added 2026-03-11.*
