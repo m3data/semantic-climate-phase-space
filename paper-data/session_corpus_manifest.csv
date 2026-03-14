@@ -1,0 +1,38 @@
+session_id,name,date,model,provider,total_turns,human_turns,duration_min,biosignal,biosignal_samples,embedding_model,filename,directory,status
+8638250a,,2025-11-20,GPT-OSS-20B,Semantic Climate,10,5,13.2,no,,all-MiniLM-L6-v2,semantic-climate-gpt-oss-20b-2025-11-20T13-42-16.json,research/archive-sessions,corpus
+8ed5afc6,,2025-11-20,GPT-OSS-20B,Semantic Climate,36,18,34.9,no,,all-MiniLM-L6-v2,semantic-climate-gpt-oss-20b-2025-11-20T14-33-30.json,research/archive-sessions,corpus
+9141f3a8,,2025-11-20,Llama 3.2,Ollama (local),10,5,14.0,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-11-20T13-13-07.json,research/archive-sessions,corpus
+6c82c258,,2025-11-24,Llama 3.2,Ollama (local),30,15,156.0,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-11-24T08-01-08.json,research/archive-sessions,corpus
+82ef88a9,,2025-11-29,GPT-OSS-20B,Semantic Climate,12,6,68.2,no,,all-MiniLM-L6-v2,semantic-climate-gpt-oss-20b-2025-11-29T07-25-50.json,research/archive-sessions,corpus
+f9223ed9,,2025-11-29,Llama 3.2,Ollama (local),22,11,5.7,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-11-29T07-57-03.json,research/archive-sessions,corpus
+ac031914,,2025-11-29,Llama 3.2,Ollama (local),50,25,78.3,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-11-29T13-17-24.json,research/archive-sessions,corpus
+zoryagpt,ZoryaGPT,2025-12-01,Custom GPT (ZoryaGPT),OpenAI ChatGPT,10,5,25,yes,734,n/a (external platform),transcript_2025-12-01_pM_002725.md,paper-data/zoryagpt-session,analysed
+fe4a1981,,2025-12-04,Llama 3.2,Ollama (local),28,14,24.3,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-04T13-32-28.json,research/archive-sessions,corpus
+74896287,,2025-12-04,Llama 3.2,Ollama (local),32,16,20.5,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-04T23-48-56.json,research/archive-sessions,corpus
+6d89b879,,2025-12-05,Llama 3.2,Ollama (local),20,10,10.1,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-05T00-19-26.json,research/archive-sessions,corpus
+263d2a04,,2025-12-05,Llama 3.2,Ollama (local),50,25,66.3,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-05T09-46-23.json,research/archive-sessions,corpus
+b1ba30fc,,2025-12-05,Llama 3.2,Ollama (local),26,13,18.1,yes,660,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-05T11-40-18.json,research/archive-sessions,corpus
+d058f85a,Grunch,2025-12-06,GPT-OSS-20B,Semantic Climate,40,20,40.2,yes,1360,all-MiniLM-L6-v2,semantic-climate-gpt-oss-20b-2025-12-06T11-06-28.json,research/session-exports,analysed
+a081c5c4,,2025-12-06,Llama 3.2,Ollama (local),42,21,15.7,no,,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-06T01-30-57.json,research/session-exports,corpus
+9ba649c4,,2025-12-06,Llama 3.2,Ollama (local),16,8,5.4,yes,249,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-06T01-53-24.json,research/session-exports,corpus
+65b0d9e7,,2025-12-07,Llama 3.2,Ollama (local),12,6,4.7,yes,209,all-MiniLM-L6-v2,sc-llama3.2-latest-2025-12-07T17-05-15-65b0d9e7.json,research/session-exports,corpus
+33fbd891,,2025-12-07,Llama 3.2,Ollama (local),20,10,3.0,yes,191,all-MiniLM-L6-v2,semantic-climate-llama3.2-latest-2025-12-07T05-54-31.json,research/session-exports,corpus
+965ae8f0,,2025-12-08,Llama 3.2 3B Instruct,Together AI,34,17,33.6,no,,all-MiniLM-L6-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-08T23-13-10-965ae8f0.json,sessions,corpus
+ece0e9a4,Echo,2025-12-10,Claude Sonnet 4,Anthropic,30,15,27.3,no,,all-mpnet-base-v2,sc-anthropic-claude-sonnet-4-20250514-2025-12-10T23-34-26-ece0e9a4.json,sessions,analysed
+d9baee50,,2025-12-10,Llama 3.2,Ollama (local),24,12,10.3,no,,all-MiniLM-L6-v2,sc-ollama-llama3.2-latest-2025-12-10T23-07-58-d9baee50.json,sessions,corpus
+c597239c,,2025-12-16,Llama 3.2 3B Instruct,Together AI,18,9,12.0,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-16T20-05-31-c597239c.json,sessions,corpus
+4d8051c0,,2025-12-16,Llama 3.1 8B Instruct,Together AI,16,8,3.2,yes,179,all-mpnet-base-v2,sc-together-meta-llama-Meta-Llama-3.1-8B-Instruct-Turbo-2025-12-16T18-51-11-4d8051c0.json,sessions,corpus
+d0afea6e,,2025-12-16,Llama 3.1 8B Instruct,Together AI,36,18,36.5,yes,505,all-mpnet-base-v2,sc-together-meta-llama-Meta-Llama-3.1-8B-Instruct-Turbo-2025-12-16T18-58-08-d0afea6e.json,sessions,corpus
+35feac08,,2025-12-21,Llama 3.2 3B Instruct,Together AI,26,13,13.1,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-21T14-12-32-35feac08.json,sessions,corpus
+e16e42ae,,2025-12-21,Llama 3.2 3B Instruct,Together AI,20,10,17.8,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-21T14-38-27-e16e42ae.json,sessions,corpus
+c2146f2d,,2025-12-22,Llama 3.2 3B,Ollama (local),0,0,,no,,all-mpnet-base-v2,sc-ollama-llama3.2-3b-2025-12-22T17-54-09-c2146f2d.json,sessions,empty/aborted
+a7eb95eb,,2025-12-22,Llama 3.2 3B,Ollama (local),0,0,,no,,all-mpnet-base-v2,sc-ollama-llama3.2-3b-2025-12-22T17-55-13-a7eb95eb.json,sessions,empty/aborted
+f2c62d1e,,2025-12-22,Llama 3.2 3B Instruct,Together AI,22,11,10.8,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-22T17-11-32-f2c62d1e.json,sessions,corpus
+0adcd96c,,2025-12-22,Llama 3.2 3B Instruct,Together AI,20,10,3.3,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-22T17-58-58-0adcd96c.json,sessions,corpus
+5cf7cdb8,,2025-12-22,Llama 3.2 3B Instruct,Together AI,16,8,2.0,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-22T18-09-39-5cf7cdb8.json,sessions,corpus
+6a3eb74b,,2025-12-23,Llama 3.2 3B Instruct,Together AI,22,11,8.2,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-23T15-04-03-6a3eb74b.json,sessions,corpus
+13120073,,2025-12-23,Llama 3.2 3B Instruct,Together AI,20,10,5.9,yes,252,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-23T15-33-24-13120073.json,sessions,corpus
+bdd5b2c8,,2025-12-23,Llama 3.2 3B Instruct,Together AI,20,10,4.1,yes,182,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-23T16-22-25-bdd5b2c8.json,sessions,corpus
+2834deb2,,2025-12-23,Llama 3.2 3B Instruct,Together AI,10,5,1.0,yes,151,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-23T17-15-01-2834deb2.json,sessions,corpus
+9554d65c,,2025-12-23,Llama 3.2 3B Instruct,Together AI,18,9,16.1,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2025-12-23T23-16-59-9554d65c.json,sessions,corpus
+9cc12261,,2026-02-06,Llama 3.2 3B Instruct,Together AI,10,5,0.4,no,,all-mpnet-base-v2,sc-together-meta-llama-Llama-3.2-3B-Instruct-Turbo-2026-02-06T14-04-54-9cc12261.json,sessions,corpus
