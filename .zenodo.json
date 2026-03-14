@@ -1,0 +1,30 @@
+{
+  "title": "Semantic Climate Phase Space (v0.4.1)",
+  "description": "Semantic complexity metrics and phase-space trajectory analysis for human-AI dialogue. Implements curvature, entropy shift, and coupling vector measures for tracking semantic climate during extended conversation.",
+  "upload_type": "software",
+  "creators": [
+    {
+      "name": "Mytka, Mathew Mark",
+      "affiliation": "University of Wollongong"
+    }
+  ],
+  "keywords": [
+    "semantic analysis",
+    "dialogue systems",
+    "coupling dynamics",
+    "entropy",
+    "phase space",
+    "human-AI interaction",
+    "NLP"
+  ],
+  "license": {
+    "id": "other-open"
+  },
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/m3data/semantic-climate-phase-space",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
